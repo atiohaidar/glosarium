@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Category, Term, GlossaryData } from './types';
 import { useGlossary } from './hooks/useGlossary';
 import { TermCard } from './components/TermCard';
@@ -6,6 +6,7 @@ import { QuizFlow } from './components/QuizFlow';
 import { DependencyGraph } from './components/DependencyGraph';
 import { Modal } from './components/Modal';
 import { DataManagement } from './components/DataManagement';
+import { AddTermForm } from './components/AddTermForm';
 import { 
     SearchIcon, SunIcon, MoonIcon, CodeBracketIcon, 
     ChevronDoubleLeftIcon, Bars3Icon, QuestionMarkCircleIcon, 
@@ -125,12 +126,12 @@ const Sidebar: React.FC<{
     );
 };
 
-const TermList: React.FC<{ terms: Term[]; allTerms: Term[] }> = ({ terms, allTerms }) => (
+const TermList: React.FC<{ terms: Term[]; allTerms: Term[]; onEditTerm?: (term: Term) => void; onDeleteTerm?: (termId: string) => void }> = ({ terms, allTerms, onEditTerm, onDeleteTerm }) => (
     <main className="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto h-full">
         {terms.length > 0 ? (
             terms.map((term, index) => (
                 <div key={term.id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'backwards' }}>
-                    <TermCard term={term} allTerms={allTerms} />
+                    <TermCard term={term} allTerms={allTerms} onEdit={onEditTerm} onDelete={onDeleteTerm} />
                 </div>
             ))
         ) : (
@@ -172,6 +173,8 @@ const App: React.FC = () => {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [viewMode, setViewMode] = useState<'list' | 'graph'>('list');
   const [selectedTermForModal, setSelectedTermForModal] = useState<Term | null>(null);
+  const [editingTerm, setEditingTerm] = useState<Term | null>(null);
+  const [isAddTermMode, setIsAddTermMode] = useState(false);
 
   useEffect(() => {
     // Set or reset initial category when data loads or changes
@@ -219,6 +222,18 @@ const App: React.FC = () => {
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
   };
+
+  const handleEditTerm = useCallback((term: Term) => {
+    setEditingTerm(term);
+  }, []);
+
+  const handleDeleteTerm = useCallback((termId: string) => {
+    // Find the category that contains this term
+    const category = categories.find(cat => cat.terms.some(t => t.id === termId));
+    if (category && window.confirm('Apakah Anda yakin ingin menghapus istilah ini?')) {
+      deleteTerm(category.id, termId);
+    }
+  }, [categories, deleteTerm]);
 
   const currentGraphData = useMemo(() => {
     if (selectedCategoryId) {
@@ -332,7 +347,7 @@ const App: React.FC = () => {
             </header>
             <div className="flex-1 relative overflow-hidden">
                 <div className={viewMode === 'list' ? 'block h-full' : 'hidden'} key={selectedCategoryId + '-' + searchTerm}>
-                  <TermList terms={displayTerms} allTerms={currentTerms} />
+                  <TermList terms={displayTerms} allTerms={currentTerms} onEditTerm={handleEditTerm} onDeleteTerm={handleDeleteTerm} />
                 </div>
                 <div className={viewMode === 'graph' ? 'block h-full' : 'hidden'}>
                     <DependencyGraph 
@@ -374,6 +389,62 @@ const App: React.FC = () => {
             <Modal onClose={() => setIsQuizMode(false)}>
                 <div className="p-6 pt-12">
                     <QuizFlow categories={categories} sortedTermsByCategory={sortedTermsByCategory} onExit={() => setIsQuizMode(false)} selectedCategoryId={selectedCategoryId} />
+                </div>
+            </Modal>
+        )}
+
+        {/* Edit Term Modal */}
+        {editingTerm && (
+            <Modal onClose={() => setEditingTerm(null)}>
+                <div className="w-full max-w-2xl p-6">
+                    <h2 className="text-xl font-bold text-white mb-4">Edit Istilah</h2>
+                    <AddTermForm 
+                        categories={categories}
+                        selectedCategoryId={selectedCategoryId}
+                        editingTerm={editingTerm}
+                        onUpdate={(categoryId, termId, updates) => {
+                            updateTerm(categoryId, termId, updates);
+                            setEditingTerm(null);
+                        }}
+                        onCancel={() => setEditingTerm(null)}
+                    />
+                </div>
+            </Modal>
+        )}
+
+        {/* Floating Add Term Button */}
+        <button
+            onClick={() => setIsAddTermMode(true)}
+            disabled={!selectedCategoryId && categories.length === 0}
+            className="fixed bottom-24 left-6 p-4 rounded-full bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white transition-all duration-300 hover:shadow-[0_0_20px_rgba(34,197,94,0.6)] hover:scale-110 z-50 group"
+            aria-label="Tambah Istilah"
+            title="Tambah Istilah Baru"
+        >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            <div className="absolute bottom-full left-0 mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                Tambah Istilah
+                <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+            </div>
+        </button>
+
+        {/* Add Term Modal */}
+        {isAddTermMode && (
+            <Modal onClose={() => setIsAddTermMode(false)}>
+                <div className="w-full max-w-2xl p-6">
+                    <h2 className="text-xl font-bold text-white mb-4">
+                        Tambah Istilah Baru {selectedCategoryId && categories.find(c => c.id === selectedCategoryId) ? `di "${categories.find(c => c.id === selectedCategoryId)?.name}"` : ''}
+                    </h2>
+                    <AddTermForm 
+                        categories={categories}
+                        selectedCategoryId={selectedCategoryId}
+                        onSave={(categoryId, term) => {
+                            addTerm(categoryId, term);
+                            setIsAddTermMode(false);
+                        }}
+                        onCancel={() => setIsAddTermMode(false)}
+                    />
                 </div>
             </Modal>
         )}

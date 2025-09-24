@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Category, Term, GlossaryData } from '../types';
 import { Modal } from './Modal';
+import { AddTermForm } from './AddTermForm';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, TrashIcon, PencilIcon, PlusIcon, DocumentTextIcon } from './icons';
 
 interface DataManagementProps {
@@ -36,10 +37,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
   const [activeTab, setActiveTab] = useState<'categories' | 'terms' | 'import-export'>('categories');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingTerm, setEditingTerm] = useState<{ term: Term; categoryId: string } | null>(null);
-  const [newTerm, setNewTerm] = useState<{ title: string; definitions: { istilah: string; bahasa: string; kenapaAda: string; contoh: string; referensi: string[] } }>({
-    title: '',
-    definitions: { istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [] }
-  });
+  const [isAddTermMode, setIsAddTermMode] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -215,10 +213,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
               ))}
             </select>
             <button
-              onClick={() => {
-                setNewTerm({ title: '', definitions: { istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [] } });
-                setEditingTerm({ term: { id: 'new', title: '', definitions: { referensi: [] } }, categoryId: selectedCategoryId });
-              }}
+              onClick={() => setIsAddTermMode(true)}
               disabled={!selectedCategoryId}
               className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white rounded-lg flex items-center gap-2"
             >
@@ -471,166 +466,21 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
         </div>
       </Modal>
 
-      {/* Edit/Add Term Modal */}
+      {/* Edit Term Modal */}
       {editingTerm && (
         <Modal onClose={() => setEditingTerm(null)} isOpen={true}>
           <div className="w-full max-w-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">
-              {editingTerm.term.id === 'new' ? 'Tambah Istilah Baru' : 'Edit Istilah'}
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Judul</label>
-                <input
-                  type="text"
-                  value={editingTerm.term.title}
-                  onChange={(e) => setEditingTerm({
-                    ...editingTerm,
-                    term: { ...editingTerm.term, title: e.target.value }
-                  })}
-                  className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Definisi (Istilah)</label>
-                <textarea
-                  value={editingTerm.term.definitions.istilah || ''}
-                  onChange={(e) => setEditingTerm({
-                    ...editingTerm,
-                    term: {
-                      ...editingTerm.term,
-                      definitions: { ...editingTerm.term.definitions, istilah: e.target.value }
-                    }
-                  })}
-                  className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Arti Bahasa</label>
-                <textarea
-                  value={editingTerm.term.definitions.bahasa || ''}
-                  onChange={(e) => setEditingTerm({
-                    ...editingTerm,
-                    term: {
-                      ...editingTerm.term,
-                      definitions: { ...editingTerm.term.definitions, bahasa: e.target.value }
-                    }
-                  })}
-                  className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Alasan Keberadaan</label>
-                <textarea
-                  value={editingTerm.term.definitions.kenapaAda || ''}
-                  onChange={(e) => setEditingTerm({
-                    ...editingTerm,
-                    term: {
-                      ...editingTerm.term,
-                      definitions: { ...editingTerm.term.definitions, kenapaAda: e.target.value }
-                    }
-                  })}
-                  className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Contoh</label>
-                <textarea
-                  value={editingTerm.term.definitions.contoh || ''}
-                  onChange={(e) => setEditingTerm({
-                    ...editingTerm,
-                    term: {
-                      ...editingTerm.term,
-                      definitions: { ...editingTerm.term.definitions, contoh: e.target.value }
-                    }
-                  })}
-                  className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Referensi (Link)</label>
-                <div className="space-y-2">
-                  {(editingTerm.term.definitions.referensi || []).map((ref, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="url"
-                        value={ref}
-                        onChange={(e) => {
-                          const newRefs = [...(editingTerm.term.definitions.referensi || [])];
-                          newRefs[index] = e.target.value;
-                          setEditingTerm({
-                            ...editingTerm,
-                            term: {
-                              ...editingTerm.term,
-                              definitions: { ...editingTerm.term.definitions, referensi: newRefs }
-                            }
-                          });
-                        }}
-                        placeholder="https://example.com"
-                        className="flex-1 bg-[#1a1a1a] border border-[#656565] rounded p-2 text-white text-sm"
-                      />
-                      <button
-                        onClick={() => {
-                          const newRefs = (editingTerm.term.definitions.referensi || []).filter((_, i) => i !== index);
-                          setEditingTerm({
-                            ...editingTerm,
-                            term: {
-                              ...editingTerm.term,
-                              definitions: { ...editingTerm.term.definitions, referensi: newRefs }
-                            }
-                          });
-                        }}
-                        className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-sm"
-                      >
-                        <TrashIcon className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                  <button
-                    onClick={() => {
-                      const newRefs = [...(editingTerm.term.definitions.referensi || []), ''];
-                      setEditingTerm({
-                        ...editingTerm,
-                        term: {
-                          ...editingTerm.term,
-                          definitions: { ...editingTerm.term.definitions, referensi: newRefs }
-                        }
-                      });
-                    }}
-                    className="w-full py-2 bg-[#525252] hover:bg-[#656565] text-white rounded-lg flex items-center justify-center gap-2"
-                  >
-                    <PlusIcon className="w-4 h-4" />
-                    Tambah Referensi
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => {
-                  if (editingTerm.term.id === 'new') {
-                    // Add new term
-                    onAddTerm(editingTerm.categoryId, {
-                      title: editingTerm.term.title,
-                      definitions: editingTerm.term.definitions
-                    });
-                  } else {
-                    // Update existing term
-                    onUpdateTerm(editingTerm.categoryId, editingTerm.term.id, editingTerm.term);
-                  }
-                  setEditingTerm(null);
-                }}
-                className="flex-1 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg"
-              >
-                {editingTerm.term.id === 'new' ? 'Tambah' : 'Simpan'}
-              </button>
-              <button
-                onClick={() => setEditingTerm(null)}
-                className="flex-1 py-2 bg-[#525252] hover:bg-[#656565] text-white rounded-lg"
-              >
-                Batal
-              </button>
-            </div>
+            <h2 className="text-xl font-bold text-white mb-4">Edit Istilah</h2>
+            <AddTermForm
+              categories={categories}
+              selectedCategoryId={editingTerm.categoryId}
+              editingTerm={editingTerm.term}
+              onUpdate={(categoryId, termId, updates) => {
+                onUpdateTerm(categoryId, termId, updates);
+                setEditingTerm(null);
+              }}
+              onCancel={() => setEditingTerm(null)}
+            />
           </div>
         </Modal>
       )}
