@@ -500,7 +500,7 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                         canNavigateNext={currentQuestionIndex < questions.length - 1 || userAnswers.every(answer => answer !== null)}
                     />
                 );
-            case 'results':
+            case 'results': {
                 const results: UserAnswer[] = questions.map((question, index) => ({
                     question,
                     userAnswer: userAnswers[index] || '',
@@ -508,6 +508,7 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                 }));
                 const duration = endTime && startTime ? endTime - startTime : 0;
                 return <QuizResults results={results} durationMs={duration} onRestart={handleRestart} onExit={onExit} />;
+            }
             default:
                 return null;
         }

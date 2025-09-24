@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { Category, Term, GlossaryData } from './types';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Category, Term } from './types';
 import { useGlossary } from './hooks/useGlossary';
 import { TermCard } from './components/TermCard';
 import { QuizFlow } from './components/QuizFlow';
@@ -8,9 +8,9 @@ import { Modal } from './components/Modal';
 import { DataManagement } from './components/DataManagement';
 import { AddTermForm } from './components/AddTermForm';
 import { 
-    SearchIcon, SunIcon, MoonIcon, CodeBracketIcon, 
-    ChevronDoubleLeftIcon, Bars3Icon, QuestionMarkCircleIcon, 
-    ArrowUpTrayIcon, BarsArrowUpIcon, BarsArrowDownIcon, GraphIcon
+    SearchIcon, SunIcon, MoonIcon, 
+    ChevronDoubleLeftIcon, Bars3Icon, 
+    BarsArrowUpIcon, BarsArrowDownIcon, GraphIcon
 } from './components/icons';
 
 // --- Helper Components defined outside App to prevent re-creation on render ---
@@ -40,49 +40,16 @@ const SearchInput: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTM
     </div>
 );
 
-const Sidebar: React.FC<{ 
+interface SidebarProps {
     categories: Category[]; 
     selectedCategoryId: string | null; 
     onSelectCategory: (id: string) => void;
     isOpen: boolean;
     onClose: () => void;
-    onImportData: (jsonString: string) => boolean;
-}> = ({ categories, selectedCategoryId, onSelectCategory, isOpen, onClose, onImportData }) => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    _onImportData: (jsonString: string) => boolean;
+}
 
-    const handleUploadClick = () => {
-        fileInputRef.current?.click();
-    };
-
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const text = e.target?.result;
-                if (typeof text !== 'string') {
-                    throw new Error("Could not read file content.");
-                }
-                if (onImportData(text)) {
-                    alert("Glosarium berhasil dimuat!");
-                } else {
-                    throw new Error("Invalid JSON format.");
-                }
-            } catch (error) {
-                console.error("Failed to load or parse glossary file:", error);
-                alert("Gagal memuat glosarium. Pastikan format file JSON sudah benar.");
-            }
-        };
-        reader.onerror = () => {
-             alert("Gagal membaca file.");
-        }
-        reader.readAsText(file);
-        
-        // Reset input value to allow re-uploading the same file
-        if(event.target) event.target.value = '';
-    };
+const Sidebar: React.FC<SidebarProps> = ({ categories, selectedCategoryId, onSelectCategory, isOpen, onClose, _onImportData }) => {
 
     return (
         <aside className={`
@@ -150,7 +117,6 @@ const App: React.FC = () => {
     loading,
     error,
     sortedTermsByCategory,
-    loadCustomGlossary,
     graphDataByCategory,
     addCategory,
     updateCategory,

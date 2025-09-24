@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Category, Term, GlossaryData } from '../types';
+import { Category, Term } from '../types';
 import { Modal } from './Modal';
 import { AddTermForm } from './AddTermForm';
 import { ArrowUpTrayIcon, ArrowDownTrayIcon, TrashIcon, PencilIcon, PlusIcon, DocumentTextIcon } from './icons';
@@ -9,14 +9,11 @@ interface DataManagementProps {
   onAddCategory: (name: string) => void;
   onUpdateCategory: (id: string, name: string) => void;
   onDeleteCategory: (id: string) => void;
-  onAddTerm: (categoryId: string, term: Omit<Term, 'id'>) => void;
   onUpdateTerm: (categoryId: string, termId: string, updates: Partial<Term>) => void;
   onDeleteTerm: (categoryId: string, termId: string) => void;
-  onBulkAddTerms: (categoryId: string, terms: Omit<Term, 'id'>[]) => void;
   onExportData: () => string;
   onImportData: (jsonString: string) => boolean;
   onResetToDefault: () => void;
-  onClearLocalData: () => void;
 }
 
 export const DataManagement: React.FC<DataManagementProps> = ({
@@ -24,20 +21,16 @@ export const DataManagement: React.FC<DataManagementProps> = ({
   onAddCategory,
   onUpdateCategory,
   onDeleteCategory,
-  onAddTerm,
   onUpdateTerm,
   onDeleteTerm,
-  onBulkAddTerms,
   onExportData,
   onImportData,
-  onResetToDefault,
-  onClearLocalData
+  onResetToDefault
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'categories' | 'terms' | 'import-export'>('categories');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingTerm, setEditingTerm] = useState<{ term: Term; categoryId: string } | null>(null);
-  const [isAddTermMode, setIsAddTermMode] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -65,33 +58,6 @@ export const DataManagement: React.FC<DataManagementProps> = ({
           alert('Data berhasil diimpor!');
         } else {
           alert('Gagal mengimpor data. Pastikan format JSON valid.');
-        }
-      };
-      reader.readAsText(file);
-    }
-    event.target.value = '';
-  };
-
-  const handleBulkImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!selectedCategoryId) {
-      alert('Pilih kategori terlebih dahulu!');
-      return;
-    }
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const content = e.target?.result as string;
-          const terms = JSON.parse(content);
-          if (Array.isArray(terms)) {
-            onBulkAddTerms(selectedCategoryId, terms);
-            alert(`${terms.length} istilah berhasil ditambahkan!`);
-          } else {
-            alert('Format file tidak valid. Harus berupa array istilah.');
-          }
-        } catch (error) {
-          alert('Gagal membaca file. Pastikan format JSON valid.');
         }
       };
       reader.readAsText(file);
@@ -196,7 +162,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
           <div className="text-[var(--text-secondary)]">
             <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg mb-2">Belum ada kategori</p>
-            <p className="text-sm">Buat kategori terlebih dahulu di tab "Kategori"</p>
+            <p className="text-sm">Buat kategori terlebih dahulu di tab &quot;Kategori&quot;</p>
           </div>
         </div>
       ) : (
@@ -212,14 +178,6 @@ export const DataManagement: React.FC<DataManagementProps> = ({
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
-            <button
-              onClick={() => setIsAddTermMode(true)}
-              disabled={!selectedCategoryId}
-              className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white rounded-lg flex items-center gap-2"
-            >
-              <PlusIcon className="w-4 h-4" />
-              Tambah Istilah
-            </button>
           </div>
 
           {selectedCategoryId && (
@@ -446,7 +404,7 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
             ].map(tab => (
               <button
                 key={tab.key}
-                onClick={() => setActiveTab(tab.key as any)}
+                onClick={() => setActiveTab(tab.key as 'categories' | 'terms' | 'import-export')}
                 className={`px-4 py-2 font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'text-purple-400 border-b-2 border-purple-400'

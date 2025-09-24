@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useMemo } from 'react';
-import { Term, GraphData, Node as GraphNode } from '../types';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import { Term, GraphData } from '../types';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 // Let TypeScript know that d3 is a global variable
 declare const d3: any;
@@ -18,10 +20,10 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
     const termMap = useMemo(() => new Map(terms.map(t => [t.id, t])), [terms]);
 
     // Helper functions for theme-aware colors
-    const getBgSecondary = () => theme === 'dark' ? '#2d2d2d' : '#ffffff';
-    const getTextSecondary = () => theme === 'dark' ? '#AAAAAA' : '#6b7280';
-    const getBorderPrimary = () => theme === 'dark' ? '#656565' : '#d1d5db';
-    const getAccent = () => theme === 'dark' ? '#0ea5e9' : '#3b82f6';
+    const getBgSecondary = useCallback(() => theme === 'dark' ? '#2d2d2d' : '#ffffff', [theme]);
+    const getTextSecondary = useCallback(() => theme === 'dark' ? '#AAAAAA' : '#6b7280', [theme]);
+    const getBorderPrimary = useCallback(() => theme === 'dark' ? '#656565' : '#d1d5db', [theme]);
+    const getAccent = useCallback(() => theme === 'dark' ? '#0ea5e9' : '#3b82f6', [theme]);
 
     useEffect(() => {
         if (!graphData || !svgRef.current || !containerRef.current) return;
@@ -228,7 +230,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
         return () => {
             simulation.stop();
         };
-    }, [graphData, termMap, onNodeClick, theme, searchTerm]);
+    }, [graphData, termMap, onNodeClick, theme, searchTerm, getAccent, getBgSecondary, getBorderPrimary, getTextSecondary]);
 
     return (
         <div ref={containerRef} className="w-full h-full flex-1 relative bg-[var(--bg-primary)]">

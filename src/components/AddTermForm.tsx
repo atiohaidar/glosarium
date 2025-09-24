@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Category, Term } from '../types';
 import { PlusIcon, TrashIcon } from './icons';
 
@@ -27,7 +27,7 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
   const DRAFT_KEY = 'glosarium-term-draft';
 
   // Save draft to localStorage
-  const saveDraft = () => {
+  const saveDraft = useCallback(() => {
     if (!isEditing) {
       const draft = {
         title,
@@ -40,10 +40,10 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
       };
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
     }
-  };
+  }, [isEditing, title, istilah, bahasa, kenapaAda, contoh, referensi, categoryId]);
 
   // Load draft from localStorage
-  const loadDraft = () => {
+  const loadDraft = useCallback(() => {
     try {
       const draft = localStorage.getItem(DRAFT_KEY);
       if (draft) {
@@ -59,7 +59,7 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
     } catch (error) {
       console.error('Failed to load draft:', error);
     }
-  };
+  }, [selectedCategoryId]);
 
   // Clear draft from localStorage
   const clearDraft = () => {
@@ -88,14 +88,14 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
       // Update category when selectedCategoryId changes for add mode
       setCategoryId(selectedCategoryId);
     }
-  }, [editingTerm, categories, selectedCategoryId, isInitialized, categoryId]);
+  }, [editingTerm, categories, selectedCategoryId, isInitialized, categoryId, loadDraft]);
 
   // Save draft whenever form data changes (only for add mode)
   useEffect(() => {
     if (isInitialized && !isEditing) {
       saveDraft();
     }
-  }, [title, istilah, bahasa, kenapaAda, contoh, referensi, categoryId, isInitialized, isEditing]);
+  }, [title, istilah, bahasa, kenapaAda, contoh, referensi, categoryId, isInitialized, isEditing, saveDraft]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -3,7 +3,6 @@ import { Category, Term, GlossaryData, Node, Link, GraphData } from '../types';
 
 // Helper function to sort terms based on dependencies within their definitions
 const sortTermsByDependency = (terms: Term[]): Term[] => {
-  const termMap = new Map(terms.map(t => [t.title.toLowerCase(), t]));
   const termTitles = terms.map(t => t.title.toLowerCase());
 
   const dependencyGraph = new Map<string, Set<string>>();
@@ -272,7 +271,8 @@ export const useGlossary = () => {
         setError("Invalid glossary file format.");
         return false;
       }
-    } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       setError("Invalid JSON format.");
       return false;
     }
@@ -288,7 +288,8 @@ export const useGlossary = () => {
       setData(defaultData);
       localStorage.setItem('glosarium-data', JSON.stringify(defaultData));
       setError(null);
-    } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       setError('Failed to reset to default data.');
     }
   }, []);
@@ -303,7 +304,8 @@ export const useGlossary = () => {
       setData(defaultData);
       localStorage.removeItem('glosarium-data');
       setError(null);
-    } catch (e) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_) {
       setError('Failed to clear local data.');
     }
   }, []);
