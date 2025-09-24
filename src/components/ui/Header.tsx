@@ -8,17 +8,17 @@ import {
 
 interface HeaderProps {
     isSidebarOpen: boolean;
-    onToggleSidebar: () => void;
+    onSidebarToggle: () => void;
     searchTerm: string;
     onSearchChange: (value: string) => void;
     viewMode: 'list' | 'graph';
-    onToggleViewMode: () => void;
+    onViewModeChange: () => void;
     sortMode: 'dependency' | 'alphabetical';
-    onToggleSortMode: () => void;
+    onSortModeChange: () => void;
     sortDirection: 'asc' | 'desc';
-    onToggleSortDirection: () => void;
+    onSortDirectionChange: () => void;
     theme: string;
-    onToggleTheme: () => void;
+    onThemeToggle: () => void;
 }
 
 const ThemeToggle: React.FC<{ theme: string; toggleTheme: () => void }> = ({ theme, toggleTheme }) => (
@@ -48,23 +48,23 @@ const SearchInput: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTM
 
 export const Header: React.FC<HeaderProps> = ({
     isSidebarOpen,
-    onToggleSidebar,
+    onSidebarToggle,
     searchTerm,
     onSearchChange,
     viewMode,
-    onToggleViewMode,
+    onViewModeChange,
     sortMode,
-    onToggleSortMode,
+    onSortModeChange,
     sortDirection,
-    onToggleSortDirection,
+    onSortDirectionChange,
     theme,
-    onToggleTheme
+    onThemeToggle
 }) => {
     return (
         <header className="p-4 md:p-6 border-b border-[var(--border-primary)]/30 flex items-center gap-2 md:gap-4 flex-wrap">
             {!isSidebarOpen && (
                 <button
-                    onClick={onToggleSidebar}
+                    onClick={onSidebarToggle}
                     className="p-2 rounded-full bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
                     aria-label="Open sidebar"
                 >
@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
             <div className="flex items-center gap-2">
                 <button
-                    onClick={onToggleViewMode}
+                    onClick={onViewModeChange}
                     className="p-2 rounded-full bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
                     aria-label={`Tampilan ${viewMode === 'list' ? 'Grafik' : 'Daftar'}`}
                     title={`Beralih ke tampilan ${viewMode === 'list' ? 'Grafik' : 'Daftar'}`}
@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
                 <div className="flex items-center gap-0.5 bg-[var(--bg-secondary)] rounded-full p-1 border border-[var(--border-primary)]/80">
                     <button
-                        onClick={onToggleSortMode}
+                        onClick={onSortModeChange}
                         className={`px-3 py-1 rounded-full transition-all text-xs font-semibold whitespace-nowrap ${sortMode === 'dependency' ? 'bg-sky-600 text-white shadow-sm' : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'}`}
                         aria-label="Toggle sort mode"
                         title={`Urutkan berdasarkan ${sortMode === 'dependency' ? 'Abjad' : 'Dependensi'}`}
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
                         {sortMode === 'dependency' ? 'Dependensi' : 'Abjad'}
                     </button>
                     <button
-                        onClick={onToggleSortDirection}
+                        onClick={onSortDirectionChange}
                         className="p-1.5 rounded-full text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all"
                         aria-label="Toggle sort direction"
                         title={`Arah urutan ${sortDirection === 'asc' ? 'Menurun' : 'Menaik'}`}
@@ -103,7 +103,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
             </div>
             <div className="flex items-center gap-2 md:gap-4 ml-auto">
-                <ThemeToggle theme={theme} toggleTheme={onToggleTheme} />
+                <ThemeToggle theme={theme} toggleTheme={onThemeToggle} />
             </div>
         </header>
     );

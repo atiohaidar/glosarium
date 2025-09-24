@@ -30,7 +30,7 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                 Object.entries(term.definitions).forEach(([key, value]) => {
                     if (value && value !== '-') {
                         const questionText = `Apa ${key === 'istilah' ? 'definisi' : key === 'bahasa' ? 'arti bahasa' : key === 'kenapaAda' ? 'alasan keberadaan' : 'contoh'} dari "<strong>${term.istilah}</strong>"?`;
-                        const correctAnswer = stripHtml(value);
+                        const correctAnswer = stripHtml(value as string);
                         const wrongOptions = terms
                             .filter(t => t.id !== term.id)
                             .map(t => {
@@ -40,12 +40,12 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                             .filter(Boolean)
                             .slice(0, 3);
 
-                        if (wrongOptions.length >= 3) {
+                        if (wrongOptions.length >= 2) {
                             availableQuestions.push({
                                 term,
                                 questionText,
                                 correctAnswer,
-                                options: shuffleArray([correctAnswer, ...wrongOptions.slice(0, 3)])
+                                options: shuffleArray([correctAnswer, ...wrongOptions.slice(0, 2)])
                             });
                         }
                     }
@@ -67,12 +67,12 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                         .filter(Boolean)
                         .slice(0, 3);
 
-                    if (wrongOptions.length >= 3) {
+                    if (wrongOptions.length >= 2) {
                         availableQuestions.push({
                             term,
                             questionText,
                             correctAnswer,
-                            options: shuffleArray([correctAnswer, ...wrongOptions.slice(0, 3)])
+                            options: shuffleArray([correctAnswer, ...wrongOptions.slice(0, 2)])
                         });
                     }
                 }
