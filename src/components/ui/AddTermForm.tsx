@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Category, Term } from '../types';
+import { Category, Term } from '../../types';
 import { PlusIcon, TrashIcon } from './icons';
+import { useTermDraft } from '../../hooks/useTermDraft';
 
 interface AddTermFormProps {
   categories: Category[];
@@ -12,60 +13,30 @@ interface AddTermFormProps {
 }
 
 export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCategoryId, onSave, onCancel, editingTerm, onUpdate }) => {
-  const [title, setTitle] = useState('');
-  const [istilah, setIstilah] = useState('');
-  const [bahasa, setBahasa] = useState('');
-  const [kenapaAda, setKenapaAda] = useState('');
-  const [contoh, setContoh] = useState('');
-  const [referensi, setReferensi] = useState<string[]>([]);
-  const [categoryId, setCategoryId] = useState(selectedCategoryId || '');
+  const isEditing = !!editingTerm;
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const isEditing = !!editingTerm;
+  const {
+    title,
+    istilah,
+    bahasa,
+    kenapaAda,
+    contoh,
+    referensi,
+    categoryId,
+    setTitle,
+    setIstilah,
+    setBahasa,
+    setKenapaAda,
+    setContoh,
+    setReferensi,
+    setCategoryId,
+    loadDraft,
+    saveDraft,
+    clearDraft
+  } = useTermDraft(isEditing, selectedCategoryId);
 
   // Local storage key for draft
-  const DRAFT_KEY = 'glosarium-term-draft';
-
-  // Save draft to localStorage
-  const saveDraft = useCallback(() => {
-    if (!isEditing) {
-      const draft = {
-        title,
-        istilah,
-        bahasa,
-        kenapaAda,
-        contoh,
-        referensi,
-        categoryId
-      };
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-    }
-  }, [isEditing, title, istilah, bahasa, kenapaAda, contoh, referensi, categoryId]);
-
-  // Load draft from localStorage
-  const loadDraft = useCallback(() => {
-    try {
-      const draft = localStorage.getItem(DRAFT_KEY);
-      if (draft) {
-        const parsed = JSON.parse(draft);
-        setTitle(parsed.title || '');
-        setIstilah(parsed.istilah || '');
-        setBahasa(parsed.bahasa || '');
-        setKenapaAda(parsed.kenapaAda || '');
-        setContoh(parsed.contoh || '');
-        setReferensi(Array.isArray(parsed.referensi) ? parsed.referensi : []);
-        setCategoryId(parsed.categoryId || selectedCategoryId || '');
-      }
-    } catch (error) {
-      console.error('Failed to load draft:', error);
-    }
-  }, [selectedCategoryId]);
-
-  // Clear draft from localStorage
-  const clearDraft = () => {
-    localStorage.removeItem(DRAFT_KEY);
-  };
-
   useEffect(() => {
     if (editingTerm) {
       // Always reset form for editing existing term

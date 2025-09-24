@@ -1,5 +1,8 @@
 import React from 'react';
-import { Term } from '../types';
+import { Term } from '../../types';
+import { LinkifiedText } from './LinkifiedText';
+import { extractDomain, linkifyHtmlString } from '../../utils/textUtils';
+import { labelMap } from '../../constants/termLabels';
 
 interface TermCardProps {
   term: Term;
@@ -8,63 +11,9 @@ interface TermCardProps {
   onDelete?: (termId: string) => void;
 }
 
-// This component parses text and wraps found glossary terms in links.
-const LinkifiedText: React.FC<{ text: string; allTerms: Term[]; currentTermId: string }> = ({ text, allTerms, currentTermId }) => {
-  if (!text || text === "-" || typeof text !== 'string') return <span className="text-gray-500 dark:text-gray-400">-</span>;
-
-  const termMap = new Map(allTerms.map(t => [t.title.toLowerCase(), t.id]));
-  const regex = new RegExp(`\\b(${allTerms.map(t => t.title).join('|')})\\b`, 'gi');
-  
-  const parts = text.split(regex);
-
-  return (
-    <>
-      {parts.map((part, i) => {
-        if (part === undefined || part === null) return <React.Fragment key={i}></React.Fragment>;
-        const termId = termMap.get(part.toLowerCase());
-        if (termId && termId !== currentTermId) {
-          return <a key={i} href={`#term-${termId}`} className="text-sky-400 dark:text-sky-300 hover:underline transition-all hover:drop-shadow-[0_0_4px_rgba(56,189,248,0.8)]">{part}</a>;
-        }
-        return <React.Fragment key={i}>{part}</React.Fragment>;
-      })}
-    </>
-  );
-};
-
-// This function takes an HTML string, linkifies terms, and returns a new HTML string.
-const linkifyHtmlString = (html: string, allTerms: Term[], currentTermId: string): string => {
-    if (!html || html === "-") return "-";
-    
-    let processedHtml = html;
-    allTerms.forEach(term => {
-        if(term.id !== currentTermId) {
-            const regex = new RegExp(`\\b(${term.title})\\b`, 'gi');
-            processedHtml = processedHtml.replace(regex, `<a href="#term-${term.id}" class="text-sky-400 dark:text-sky-300 hover:underline transition-all hover:drop-shadow-[0_0_4px_rgba(56,189,248,0.8)]">${term.title}</a>`);
-        }
-    });
-    return processedHtml;
-}
-
 
 export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDelete }) => {
   const definitionEntries = Object.entries(term.definitions);
-  const labelMap: { [key: string]: string } = {
-    bahasa: 'Bahasa',
-    istilah: 'Istilah',
-    kenapaAda: 'Kenapa Ada',
-    contoh: 'Contoh',
-    referensi: 'Referensi'
-  };
-
-  // Function to extract domain from URL
-  const extractDomain = (url: string) => {
-    try {
-      const domain = new URL(url).hostname;
-      return domain.startsWith('www.') ? domain.slice(4) : domain;
-    } catch {
-      return url; // Fallback if invalid URL
-    }
-  };
 
   return (
     <div id={`term-${term.id}`} className="bg-[var(--bg-tertiary)] p-6 rounded-xl border border-[var(--border-primary)]/30 transition-all duration-300 hover:border-[var(--accent)] hover:shadow-xl hover:shadow-[var(--accent)]/20 hover:bg-[var(--bg-secondary)] hover:scale-[1.02] relative">

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useCallback } from 'react';
-import { Term, GraphData } from '../types';
+import { Term, GraphData } from '../../types';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
