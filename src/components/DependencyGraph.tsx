@@ -17,6 +17,12 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
     const containerRef = useRef<HTMLDivElement>(null);
     const termMap = useMemo(() => new Map(terms.map(t => [t.id, t])), [terms]);
 
+    // Helper functions for theme-aware colors
+    const getBgSecondary = () => theme === 'dark' ? '#2d2d2d' : '#ffffff';
+    const getTextSecondary = () => theme === 'dark' ? '#AAAAAA' : '#6b7280';
+    const getBorderPrimary = () => theme === 'dark' ? '#656565' : '#d1d5db';
+    const getAccent = () => theme === 'dark' ? '#0ea5e9' : '#3b82f6';
+
     useEffect(() => {
         if (!graphData || !svgRef.current || !containerRef.current) return;
         
@@ -30,7 +36,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
                .attr("x", "50%")
                .attr("y", "50%")
                .attr("text-anchor", "middle")
-               .attr("fill", "#AAAAAA")
+               .attr("fill", getTextSecondary())
                .text("Tidak ada dependensi untuk ditampilkan di kategori ini.");
             return;
         }
@@ -68,7 +74,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             .selectAll("line")
             .data(dataLinks)
             .join("line")
-            .attr("stroke", "#656565")
+            .attr("stroke", getBorderPrimary())
             .attr("stroke-width", 1.5);
         
         // Add arrow markers in the middle of links
@@ -77,7 +83,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             .data(dataLinks)
             .join("path")
             .attr("d", "M0,-5L10,0L0,5")
-            .attr("fill", "#656565")
+            .attr("fill", getBorderPrimary())
             .attr("stroke", "none")
             .attr("stroke-width", 0)
             .style("pointer-events", "none");
@@ -87,8 +93,8 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             .data(dataNodes)
             .join("circle")
             .attr("r", (d: any) => d.radius)
-            .attr("fill", "#2d2d2d")
-            .attr("stroke", "#656565")
+            .attr("fill", getBgSecondary())
+            .attr("stroke", getBorderPrimary())
             .attr("stroke-width", 1.5)
             .style("cursor", "pointer")
             .on("click", (event: any, d: any) => {
@@ -103,7 +109,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             .selectAll("text")
             .data(dataNodes)
             .join("text")
-            .attr("fill", "#AAAAAA")
+            .attr("fill", getTextSecondary())
             .attr("font-size", "10px")
             .attr("pointer-events", "none")
             .attr("text-anchor", "middle")
@@ -134,10 +140,10 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
 
         if (isSearching) {
             node.attr('opacity', (d: any) => searchResults.has(d.id) ? 1.0 : 0.1);
-            node.attr('fill', (d: any) => searchResults.has(d.id) ? '#0ea5e9' : '#2d2d2d');
+            node.attr('fill', (d: any) => searchResults.has(d.id) ? getAccent() : getBgSecondary());
             label.attr('opacity', (d: any) => searchResults.has(d.id) ? 1.0 : 0.1);
             link.attr('stroke-opacity', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? 0.8 : 0.05);
-            arrow.attr('fill', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? '#0ea5e9' : '#656565');
+            arrow.attr('fill', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? getAccent() : getBorderPrimary());
             arrow.attr('opacity', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? 1.0 : 0.1);
         } else {
             handleMouseOut(); // Reset to default state if search is cleared
@@ -147,18 +153,18 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             if (isSearching) return; // Disable hover when searching
             node.transition().duration(100).attr("opacity", (n: any) => isConnected(d, n) ? 1.0 : 0.2);
             link.transition().duration(100)
-                .attr("stroke", (l: any) => l.source.id === d.id || l.target.id === d.id ? "#0ea5e9" : "#656565")
+                .attr("stroke", (l: any) => l.source.id === d.id || l.target.id === d.id ? getAccent() : getBorderPrimary())
                 .attr("stroke-opacity", (l: any) => l.source.id === d.id || l.target.id === d.id ? 1.0 : 0.3);
             arrow.transition().duration(100)
-                .attr("fill", (l: any) => l.source.id === d.id || l.target.id === d.id ? "#0ea5e9" : "#656565");
+                .attr("fill", (l: any) => l.source.id === d.id || l.target.id === d.id ? getAccent() : getBorderPrimary());
             label.transition().duration(100).attr("opacity", (n: any) => isConnected(d, n) ? 1.0 : 0.2);
         }
 
         function handleMouseOut() {
             if (isSearching) return; // Disable hover when searching
-            node.transition().duration(200).attr("opacity", 1.0).attr('fill', '#2d2d2d');
-            link.transition().duration(200).attr("stroke", "#656565").attr("stroke-opacity", 0.6);
-            arrow.transition().duration(200).attr("fill", "#656565");
+            node.transition().duration(200).attr("opacity", 1.0).attr('fill', getBgSecondary());
+            link.transition().duration(200).attr("stroke", getBorderPrimary()).attr("stroke-opacity", 0.6);
+            arrow.transition().duration(200).attr("fill", getBorderPrimary());
             label.transition().duration(200).attr("opacity", 1.0);
         }
         
@@ -225,9 +231,9 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
     }, [graphData, termMap, onNodeClick, theme, searchTerm]);
 
     return (
-        <div ref={containerRef} className="w-full h-full flex-1 relative bg-[#222222] dark:bg-transparent">
+        <div ref={containerRef} className="w-full h-full flex-1 relative bg-[var(--bg-primary)]">
             <svg ref={svgRef}></svg>
-            <div className="absolute top-4 left-6 text-xs text-[#AAAAAA] bg-[#2d2d2d]/80 p-2 rounded-md border border-[#656565]/30 pointer-events-none">
+            <div className="absolute top-4 left-6 text-xs text-[var(--text-primary)] bg-[var(--bg-secondary)]/80 p-2 rounded-md border border-[var(--border-primary)]/30 pointer-events-none">
                 Arahkan kursor ke istilah untuk melihat koneksi. Klik untuk detail.
             </div>
         </div>

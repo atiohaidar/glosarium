@@ -37,12 +37,12 @@ export const Modal: React.FC<ModalProps> = ({ onClose, children, isOpen = true }
     >
       <div 
         ref={modalRef} 
-        className="bg-[#2d2d2d] rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-[#656565]/50 animate-slide-up"
+        className="bg-[var(--bg-secondary)] rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative border border-[var(--border-primary)]/50 animate-slide-up"
       >
         {children}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 p-1.5 rounded-full bg-[#525252]/50 hover:bg-[#656565]/80 text-[#AAAAAA] transition-all"
+          className="absolute top-3 right-3 p-1.5 rounded-full bg-[var(--bg-tertiary)]/50 hover:bg-[var(--border-primary)]/80 text-[var(--text-primary)] transition-all"
           aria-label="Close modal"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>

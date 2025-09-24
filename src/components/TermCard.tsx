@@ -67,14 +67,14 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDe
   };
 
   return (
-    <div id={`term-${term.id}`} className="bg-[#494949]/30 dark:bg-[#494949]/50 p-6 rounded-xl border border-[#656565]/30 dark:border-[#656565]/50 transition-all duration-300 hover:border-sky-500/70 hover:shadow-lg hover:shadow-sky-500/10 relative">
+    <div id={`term-${term.id}`} className="bg-[var(--bg-tertiary)]/30 p-6 rounded-xl border border-[var(--border-primary)]/30 transition-all duration-300 hover:border-[var(--accent)]/70 hover:shadow-lg hover:shadow-[var(--accent)]/10 relative">
       {/* Edit and Delete buttons */}
       {(onEdit || onDelete) && (
         <div className="absolute top-4 right-4 flex gap-2">
           {onEdit && (
             <button
               onClick={() => onEdit(term)}
-              className="p-2 text-[#AAAAAA] hover:text-white hover:bg-[#525252] rounded-lg transition-colors"
+              className="p-2 text-[var(--text-primary)] hover:text-white hover:bg-[var(--bg-tertiary)] rounded-lg transition-colors"
               title="Edit istilah"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,15 +96,15 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDe
         </div>
       )}
 
-      <h3 className="text-xl font-bold text-slate-100 dark:text-white mb-4 font-['Poppins'] pr-20">{term.title}</h3>
+      <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4 font-['Poppins'] pr-20">{term.title}</h3>
       <div className="space-y-4">
         {definitionEntries.map(([key, value]) => {
           if (!value || value === '-' || typeof value !== 'string') return null;
           
           return (
             <div key={key} className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-x-4 gap-y-1">
-              <dt className="font-semibold text-sm text-slate-400 dark:text-slate-300">{labelMap[key]}:</dt>
-              <dd className={`text-slate-300 dark:text-[#AAAAAA] ${key === 'istilah' ? 'text-lg font-semibold text-slate-100 dark:text-white' : ''}`}>
+              <dt className="font-semibold text-sm text-[var(--text-secondary)]">{labelMap[key]}:</dt>
+              <dd className={`text-[var(--text-primary)] ${key === 'istilah' ? 'text-lg font-semibold text-[var(--text-primary)]' : ''}`}>
                 {key === 'contoh' ? (
                   <div 
                     className="prose prose-sm prose-invert max-w-none 
@@ -124,13 +124,13 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDe
         {/* References */}
         {term.definitions.referensi && term.definitions.referensi.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-x-4 gap-y-1">
-            <dt className="font-semibold text-sm text-slate-400 dark:text-slate-300">Referensi:</dt>
+            <dt className="font-semibold text-sm text-[var(--text-secondary)]">Referensi:</dt>
             <dd className="flex flex-wrap gap-2">
               {term.definitions.referensi.map((source, index) => (
                 <button
                   key={index}
                   onClick={() => window.open(source, '_blank')}
-                  className="inline-flex items-center px-3 py-1 text-xs bg-[#3a3a3a] hover:bg-[#4a4a4a] text-gray-300 rounded-full transition-colors cursor-pointer border border-[#656565]/30"
+                  className="inline-flex items-center px-3 py-1 text-xs bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-secondary)] rounded-full transition-colors cursor-pointer border border-[var(--border-primary)]/30"
                   title={source} // Show full URL on hover
                 >
                   {extractDomain(source)}

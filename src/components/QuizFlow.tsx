@@ -43,7 +43,7 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
                 className="-rotate-90"
             >
                 <circle
-                    stroke="#373737"
+                    stroke="var(--border-primary)"
                     fill="transparent"
                     strokeWidth={stroke}
                     r={normalizedRadius}
@@ -51,7 +51,7 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
                     cy={radius}
                 />
                 <circle
-                    stroke="#0ea5e9" // sky-500
+                    stroke="var(--accent)"
                     fill="transparent"
                     strokeWidth={stroke}
                     strokeDasharray={circumference + ' ' + circumference}
@@ -64,7 +64,7 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
             </svg>
             <div className="absolute text-center">
                 <p className="text-4xl font-bold text-sky-400">{score}%</p>
-                <p className="text-sm text-[#AAAAAA]">Skor</p>
+                <p className="text-sm text-[var(--text-secondary)]">Skor</p>
             </div>
         </div>
     );
@@ -127,23 +127,23 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
         <div className="w-full max-w-lg mx-auto">
             <div className="flex items-center gap-3 mb-6">
                 <QuestionMarkCircleIcon className="w-8 h-8 text-sky-400" />
-                <h1 className="text-2xl font-bold text-white">Pengaturan Kuis</h1>
+                <h1 className="text-2xl font-bold text-[var(--text-primary)]">Pengaturan Kuis</h1>
             </div>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-[#AAAAAA] mb-2">Kategori</label>
-                    <select id="category" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white focus:ring-2 focus:ring-sky-500" title="Pilih kategori istilah yang akan diujikan.">
+                    <label htmlFor="category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Kategori</label>
+                    <select id="category" value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500" title="Pilih kategori istilah yang akan diujikan.">
                         {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                     </select>
                 </div>
                  <div>
-                    <label htmlFor="questionType" className="block text-sm font-medium text-[#AAAAAA] mb-2">Tanyakan tentang...</label>
-                    <select id="questionType" value={questionKey} onChange={(e) => setQuestionKey(e.target.value as keyof Definitions | 'random')} className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white focus:ring-2 focus:ring-sky-500" title="Pilih jenis informasi yang akan ditanyakan (definisi, arti, dll).">
+                    <label htmlFor="questionType" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Tanyakan tentang...</label>
+                    <select id="questionType" value={questionKey} onChange={(e) => setQuestionKey(e.target.value as keyof Definitions | 'random')} className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500" title="Pilih jenis informasi yang akan ditanyakan (definisi, arti, dll).">
                         {questionTypes.map(type => <option key={type.key} value={type.key}>{type.label}</option>)}
                     </select>
                 </div>
                 <div>
-                    <label htmlFor="numQuestions" className="block text-sm font-medium text-[#AAAAAA] mb-2">
+                    <label htmlFor="numQuestions" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Jumlah Soal <span className="text-xs opacity-70">(Maks: {maxQuestions})</span>
                     </label>
                     <input
@@ -157,12 +157,12 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
                         min="1"
                         max={maxQuestions}
                         disabled={maxQuestions === 0}
-                        className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Masukkan jumlah soal yang Anda inginkan untuk kuis ini."
                     />
                 </div>
                 <div className="flex gap-4 pt-4">
-                    <button type="button" onClick={onExit} className="w-full py-3 px-4 rounded-lg bg-[#525252] text-white font-semibold hover:bg-[#656565] transition-colors">Kembali</button>
+                    <button type="button" onClick={onExit} className="w-full py-3 px-4 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] font-semibold hover:bg-[var(--border-primary)] transition-colors">Kembali</button>
                     <button type="submit" disabled={numQuestions === 0 || !categoryId} className="w-full py-3 px-4 rounded-lg bg-sky-600 text-white font-semibold hover:bg-sky-500 transition-colors disabled:bg-sky-800 disabled:cursor-not-allowed">Mulai Kuis</button>
                 </div>
             </form>
@@ -210,7 +210,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
 
     const getButtonClass = (option: string) => {
         if (!isAnswered) {
-            return "bg-[#525252] hover:bg-[#656565]";
+            return "bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)]";
         }
         if (option === question.correctAnswer) {
             return "bg-green-600/80 ring-2 ring-green-400 transform scale-105";
@@ -218,27 +218,27 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
         if (option === selectedAnswer) {
             return "bg-red-600/80 opacity-70";
         }
-        return "bg-[#525252] opacity-50";
+        return "bg-[var(--bg-tertiary)] opacity-50";
     };
 
     return (
         <div className="w-full max-w-2xl mx-auto">
             <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
-                    <p className="text-sm text-[#AAAAAA]">Soal {questionNumber} dari {totalQuestions}</p>
-                    <div className="flex items-center gap-1 text-sm text-[#AAAAAA]">
+                    <p className="text-sm text-[var(--text-secondary)]">Soal {questionNumber} dari {totalQuestions}</p>
+                    <div className="flex items-center gap-1 text-sm text-[var(--text-secondary)]">
                         <ClockIcon className="w-4 h-4" />
                         <span>{formatDuration(elapsedTime)}</span>
                     </div>
                 </div>
-                <div className="w-full bg-[#2d2d2d] rounded-full h-2.5">
+                <div className="w-full bg-[var(--bg-secondary)] rounded-full h-2.5">
                     <div className="bg-sky-500 h-2.5 rounded-full transition-all duration-300" style={{ width: `${((questionNumber-1) / totalQuestions) * 100}%` }}></div>
                 </div>
             </div>
             
             
             
-            <div className="text-lg text-white mb-8 min-h-[6rem] flex items-center justify-center text-center">
+            <div className="text-lg text-[var(--text-primary)] mb-8 min-h-[6rem] flex items-center justify-center text-center">
               <p dangerouslySetInnerHTML={{ __html: question.questionText }} />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -247,7 +247,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                         key={index}
                         onClick={() => handleAnswerClick(option)}
                         disabled={isAnswered}
-                        className={`p-4 rounded-lg text-white text-left transition-all duration-300 ${getButtonClass(option)} disabled:cursor-not-allowed`}
+                        className={`p-4 rounded-lg text-[var(--text-primary)] text-left transition-all duration-300 ${getButtonClass(option)} disabled:cursor-not-allowed`}
                     >
                         {option}
                     </button>
@@ -258,7 +258,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                 <button
                     onClick={() => onNavigate('prev')}
                     disabled={!canNavigatePrev}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#525252] text-white hover:bg-[#656565] disabled:bg-[#2d2d2d] disabled:text-[#656565] disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--border-primary)] disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-secondary)] disabled:cursor-not-allowed transition-colors"
                 >
                     <ChevronLeftIcon className="w-5 h-5" />
                     Sebelumnya
@@ -271,7 +271,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                             className={`w-3 h-3 rounded-full transition-colors ${
                                 i < questionNumber - 1 ? 'bg-green-500' : 
                                 i === questionNumber - 1 ? 'bg-sky-500' : 
-                                'bg-[#525252]'
+                                'bg-[var(--bg-tertiary)]'
                             }`}
                         />
                     ))}
@@ -280,7 +280,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                 <button
                     onClick={() => onNavigate('next')}
                     disabled={!canNavigateNext}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#525252] text-white hover:bg-[#656565] disabled:bg-[#2d2d2d] disabled:text-[#656565] disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] hover:bg-[var(--border-primary)] disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-secondary)] disabled:cursor-not-allowed transition-colors"
                 >
                     Selanjutnya
                     <ChevronRightIcon className="w-5 h-5" />
@@ -304,32 +304,32 @@ const QuizResults: React.FC<QuizResultsProps> = ({ results, durationMs, onRestar
 
     return (
         <div className="w-full max-w-3xl mx-auto">
-            <h1 className="text-3xl font-bold text-white text-center mb-2">Kuis Selesai!</h1>
-            <p className="text-center text-[#AAAAAA] mb-8">Berikut adalah hasil Anda:</p>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] text-center mb-2">Kuis Selesai!</h1>
+            <p className="text-center text-[var(--text-secondary)] mb-8">Berikut adalah hasil Anda:</p>
             
-            <div className="bg-[#2d2d2d] p-6 rounded-lg text-center mb-8 flex flex-col md:flex-row justify-around items-center gap-6 md:gap-4">
+            <div className="bg-[var(--bg-secondary)] p-6 rounded-lg text-center mb-8 flex flex-col md:flex-row justify-around items-center gap-6 md:gap-4">
                 <div className="flex flex-col items-center justify-center">
                    <ScoreRing score={score} />
-                   <p className="mt-4 text-white">{correctAnswers} dari {results.length} jawaban benar</p>
+                   <p className="mt-4 text-[var(--text-primary)]">{correctAnswers} dari {results.length} jawaban benar</p>
                 </div>
-                <div className="border-t md:border-l border-[#656565]/50 h-px w-full md:h-32 md:w-px"></div>
+                <div className="border-t md:border-l border-[var(--border-primary)]/50 h-px w-full md:h-32 md:w-px"></div>
                 <div className="text-center">
-                    <p className="text-lg text-[#AAAAAA] mb-2">Waktu Mengerjakan</p>
+                    <p className="text-lg text-[var(--text-secondary)] mb-2">Waktu Mengerjakan</p>
                     <p className="text-5xl md:text-6xl font-bold text-sky-400 my-2 flex items-center justify-center gap-2">
                         <ClockIcon className="w-10 h-10" />
                         {formatDuration(durationMs)}
                     </p>
-                    <p className="text-white">Menit:Detik</p>
+                    <p className="text-[var(--text-primary)]">Menit:Detik</p>
                 </div>
             </div>
 
             {incorrectAnswers.length > 0 && (
                 <div className="mb-8">
-                    <h2 className="text-xl font-semibold text-white mb-4">Perlu Dipelajari Lagi</h2>
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-4">Perlu Dipelajari Lagi</h2>
                     <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
                         {incorrectAnswers.map(({ question, userAnswer }, index) => (
-                            <div key={index} className="bg-[#2d2d2d]/70 p-4 rounded-lg">
-                                <p className="text-sm text-[#AAAAAA] mb-2" dangerouslySetInnerHTML={{ __html: question.questionText }} />
+                            <div key={index} className="bg-[var(--bg-secondary)]/70 p-4 rounded-lg">
+                                <p className="text-sm text-[var(--text-secondary)] mb-2" dangerouslySetInnerHTML={{ __html: question.questionText }} />
                                 <div className="flex items-center gap-2 text-red-400/90">
                                     <XCircleIcon className="w-5 h-5 flex-shrink-0" />
                                     <p><span className="font-semibold">Jawabanmu:</span> {userAnswer}</p>
@@ -348,7 +348,7 @@ const QuizResults: React.FC<QuizResultsProps> = ({ results, durationMs, onRestar
             )}
 
             <div className="flex gap-4 pt-4">
-                <button onClick={onExit} className="w-full py-3 px-4 rounded-lg bg-[#525252] text-white font-semibold hover:bg-[#656565] transition-colors">Kembali ke Glosarium</button>
+                <button onClick={onExit} className="w-full py-3 px-4 rounded-lg bg-[var(--bg-tertiary)] text-[var(--text-primary)] font-semibold hover:bg-[var(--border-primary)] transition-colors">Kembali ke Glosarium</button>
                 <button onClick={onRestart} className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-lg bg-sky-600 text-white font-semibold hover:bg-sky-500 transition-colors">
                     <ArrowPathIcon className="w-5 h-5" />
                     Coba Lagi
@@ -481,7 +481,7 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
             case 'active':
                 if (questions.length === 0 || !questions[currentQuestionIndex]) {
                     return (
-                        <div className="text-center text-white">
+                        <div className="text-center text-[var(--text-primary)]">
                             <p className="mb-4">Tidak ada soal yang bisa dibuat dari pengaturan ini.</p>
                             <button onClick={handleRestart} className="py-2 px-4 rounded-lg bg-sky-600 hover:bg-sky-500 transition-colors">Kembali</button>
                         </div>

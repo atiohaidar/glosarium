@@ -103,7 +103,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
     <div className="space-y-4">
       {categories.length === 0 ? (
         <div className="text-center py-8">
-          <div className="text-[#AAAAAA] mb-4">
+          <div className="text-[var(--text-primary)] mb-4">
             <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg mb-2">Belum ada kategori</p>
             <p className="text-sm">Tambahkan kategori baru untuk memulai mengelola istilah</p>
@@ -114,10 +114,10 @@ export const DataManagement: React.FC<DataManagementProps> = ({
       <div className="flex gap-2">
         <input
           type="text"
-          placeholder="Nama kategori baru"
+          placeholder="Masukan Nama kategori baru"
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
-          className="flex-1 bg-[#2d2d2d] border border-[#656565] rounded-lg p-2 text-white"
+          className="flex-1 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-2 text-[var(--text-primary)]"
         />
         <button
           onClick={() => {
@@ -136,14 +136,14 @@ export const DataManagement: React.FC<DataManagementProps> = ({
       {categories.length > 0 && (
         <div className="space-y-2 max-h-60 overflow-y-auto">
           {categories.map(category => (
-            <div key={category.id} className="flex items-center justify-between bg-[#2d2d2d] p-3 rounded-lg">
+            <div key={category.id} className="flex items-center justify-between bg-[var(--bg-secondary)] p-3 rounded-lg">
               {editingCategory?.id === category.id ? (
                 <div className="flex-1 flex gap-2">
                   <input
                     type="text"
                     value={editingCategory.name}
                     onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-                    className="flex-1 bg-[#1a1a1a] border border-[#656565] rounded p-1 text-white"
+                    className="flex-1 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded p-1 text-[var(--text-primary)]"
                   />
                   <button
                     onClick={() => {
@@ -163,11 +163,11 @@ export const DataManagement: React.FC<DataManagementProps> = ({
                 </div>
               ) : (
                 <>
-                  <span className="text-white">{category.name} ({category.terms.length} istilah)</span>
+                  <span className="text-[var(--text-primary)]">{category.name} ({category.terms.length} istilah)</span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setEditingCategory(category)}
-                      className="p-1 text-[#AAAAAA] hover:text-white"
+                      className="p-1 text-[var(--text-secondary)] hover:text-white"
                       title="Edit kategori"
                     >
                       <PencilIcon className="w-4 h-4" />
@@ -193,7 +193,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
     <div className="space-y-4">
       {categories.length === 0 ? (
         <div className="text-center py-8">
-          <div className="text-[#AAAAAA]">
+          <div className="text-[var(--text-secondary)]">
             <DocumentTextIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg mb-2">Belum ada kategori</p>
             <p className="text-sm">Buat kategori terlebih dahulu di tab "Kategori"</p>
@@ -205,7 +205,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
             <select
               value={selectedCategoryId}
               onChange={(e) => setSelectedCategoryId(e.target.value)}
-              className="bg-[#2d2d2d] border border-[#656565] rounded-lg p-2 text-white"
+              className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-2 text-[var(--text-primary)]"
             >
               <option value="">Pilih kategori</option>
               {categories.map(cat => (
@@ -283,13 +283,13 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
               {/* Terms List */}
               <div className="space-y-2 max-h-60 overflow-y-auto">
                 {categories.find(c => c.id === selectedCategoryId)?.terms.map(term => (
-                  <div key={term.id} className="bg-[#2d2d2d] p-3 rounded-lg">
+                  <div key={term.id} className="bg-[var(--bg-secondary)] p-3 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-white font-semibold">{term.title}</span>
+                      <span className="text-[var(--text-primary)] font-semibold">{term.title}</span>
                       <div className="flex gap-2">
                         <button
                           onClick={() => setEditingTerm({ term, categoryId: selectedCategoryId })}
-                          className="p-1 text-[#AAAAAA] hover:text-white"
+                          className="p-1 text-[var(--text-secondary)] hover:text-white"
                           title="Edit istilah"
                         >
                           <PencilIcon className="w-4 h-4" />
@@ -303,7 +303,7 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
                         </button>
                       </div>
                     </div>
-                    <div className="text-sm text-[#AAAAAA]">
+                    <div className="text-sm text-[var(--text-secondary)]">
                       <div>Istilah: {term.definitions.istilah || '-'}</div>
                       <div>Bahasa: {term.definitions.bahasa || '-'}</div>
                       <div>Alasan: {term.definitions.kenapaAda || '-'}</div>
@@ -340,12 +340,12 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
   const renderImportExportTab = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-[#2d2d2d] p-4 rounded-lg">
+        <div className="bg-[var(--bg-secondary)] p-4 rounded-lg">
           <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
             <ArrowDownTrayIcon className="w-5 h-5" />
             Export Data
           </h3>
-          <p className="text-[#AAAAAA] text-sm mb-3">
+          <p className="text-[var(--text-secondary)] text-sm mb-3">
             Unduh semua data glosarium dalam format JSON
           </p>
           <button
@@ -357,12 +357,12 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
           </button>
         </div>
 
-        <div className="bg-[#2d2d2d] p-4 rounded-lg">
+        <div className="bg-[var(--bg-secondary)] p-4 rounded-lg">
           <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
             <ArrowUpTrayIcon className="w-5 h-5" />
             Import Data
           </h3>
-          <p className="text-[#AAAAAA] text-sm mb-3">
+          <p className="text-[var(--text-secondary)] text-sm mb-3">
             Unggah file JSON untuk mengganti semua data
           </p>
           <input
@@ -382,7 +382,7 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
         </div>
       </div>
 
-      <div className="border-t border-[#656565] pt-4">
+      <div className="border-t border-[var(--border-primary)] pt-4">
         <h3 className="text-white font-semibold mb-3">Pengaturan Data</h3>
         <div className="space-y-2">
           <button
@@ -435,10 +435,10 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
         <div className="w-full max-w-4xl max-h-[80vh] overflow-hidden p-6">
           <div className="flex items-center gap-3 mb-6">
             <DocumentTextIcon className="w-8 h-8 text-purple-400" />
-            <h1 className="text-2xl font-bold text-white">Kelola Data Glosarium</h1>
+            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Kelola Data Glosarium</h1>
           </div>
 
-          <div className="flex border-b border-[#656565] mb-6">
+          <div className="flex border-b border-[var(--border-primary)] mb-6">
             {[
               { key: 'categories', label: 'Kategori' },
               { key: 'terms', label: 'Istilah' },
@@ -450,7 +450,7 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
                 className={`px-4 py-2 font-medium transition-colors ${
                   activeTab === tab.key
                     ? 'text-purple-400 border-b-2 border-purple-400'
-                    : 'text-[#AAAAAA] hover:text-white'
+                    : 'text-[var(--text-secondary)] hover:text-white'
                 }`}
               >
                 {tab.label}

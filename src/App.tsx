@@ -18,7 +18,7 @@ import {
 const ThemeToggle: React.FC<{ theme: string; toggleTheme: () => void }> = ({ theme, toggleTheme }) => (
   <button
     onClick={toggleTheme}
-    className="p-2 rounded-full bg-[#525252] hover:bg-[#656565] text-[#AAAAAA] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+    className="p-2 rounded-full bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
     aria-label="Toggle theme"
   >
     {theme === 'dark' ? <SunIcon className="w-5 h-5" /> : <MoonIcon className="w-5 h-5" />}
@@ -28,14 +28,14 @@ const ThemeToggle: React.FC<{ theme: string; toggleTheme: () => void }> = ({ the
 const SearchInput: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ value, onChange }) => (
     <div className="relative w-full">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <SearchIcon className="h-5 w-5 text-[#AAAAAA]" />
+            <SearchIcon className="h-5 w-5 text-[var(--text-secondary)]" />
         </div>
         <input
             type="text"
             placeholder="Cari istilah..."
             value={value}
             onChange={onChange}
-            className="w-full pl-10 pr-4 py-2 bg-[#2d2d2d] border border-[#656565] rounded-lg text-[#AAAAAA] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
         />
     </div>
 );
@@ -86,7 +86,7 @@ const Sidebar: React.FC<{
 
     return (
         <aside className={`
-            flex-shrink-0 bg-[#2d2d2d] md:bg-transparent
+            flex-shrink-0 bg-[var(--bg-secondary)] md:bg-transparent
             transition-all duration-300 ease-in-out
             ${isOpen ? 'w-full md:w-64 lg:w-72 p-4 md:p-6' : 'w-0 p-0'}
             overflow-hidden
@@ -95,11 +95,11 @@ const Sidebar: React.FC<{
                                   <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2">
                         <img src="./PP-Tio.jpg" alt="Logo" className="w-8 h-8 rounded-full object-cover"/>
-                        <h1 className="text-xl font-bold text-white">Glosarium</h1>
+                        <h1 className="text-xl font-bold text-[var(--text-primary)]">Glosarium</h1>
                     </div>
                      <button
                         onClick={onClose}
-                        className="p-2 -mr-2 rounded-full hover:bg-[#525252] text-[#AAAAAA] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                        className="p-2 -mr-2 rounded-full hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
                         aria-label="Close sidebar"
                     >
                         <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -113,7 +113,7 @@ const Sidebar: React.FC<{
                             className={`px-4 py-2 text-left rounded-md w-full whitespace-nowrap transition-all duration-200 text-sm md:text-base ${
                                 selectedCategoryId === cat.id
                                     ? 'bg-sky-500/80 text-white font-semibold shadow-md shadow-sky-500/30'
-                                    : 'text-[#AAAAAA] hover:bg-[#525252] hover:text-white'
+                                    : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] hover:text-white'
                             }`}
                         >
                             {cat.name}
@@ -136,7 +136,7 @@ const TermList: React.FC<{ terms: Term[]; allTerms: Term[]; onEditTerm?: (term: 
             ))
         ) : (
             <div className="text-center py-10">
-                <p className="text-[#AAAAAA]">Tidak ada istilah yang cocok dengan pencarian Anda.</p>
+                <p className="text-[var(--text-secondary)]">Tidak ada istilah yang cocok dengan pencarian Anda.</p>
             </div>
         )}
     </main>
@@ -166,7 +166,11 @@ const App: React.FC = () => {
   } = useGlossary();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => {
+    // Load theme from localStorage or default to 'dark'
+    const savedTheme = localStorage.getItem('glosarium-theme');
+    return savedTheme || 'dark';
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [sortMode, setSortMode] = useState<'dependency' | 'alphabetical'>('dependency');
@@ -186,10 +190,30 @@ const App: React.FC = () => {
   }, [categories, selectedCategoryId]);
 
   useEffect(() => {
-    // Apply theme to HTML element for Tailwind dark mode
+    // Apply theme to HTML element for Tailwind dark mode and CSS variables
     const root = window.document.documentElement;
-    root.classList.remove(theme === 'dark' ? 'light' : 'dark');
+    root.classList.remove('light', 'dark');
     root.classList.add(theme);
+
+    // Update CSS variables for custom colors
+    if (theme === 'dark') {
+      root.style.setProperty('--bg-primary', '#222222');
+      root.style.setProperty('--bg-secondary', '#2d2d2d');
+      root.style.setProperty('--bg-tertiary', '#494949');
+      root.style.setProperty('--text-primary', '#AAAAAA');
+      root.style.setProperty('--text-secondary', '#656565');
+      root.style.setProperty('--border-primary', '#656565');
+      root.style.setProperty('--accent', '#0ea5e9');
+    } else {
+      root.style.setProperty('--bg-primary', '#f3f4f6');
+      root.style.setProperty('--bg-secondary', '#ffffff');
+      root.style.setProperty('--bg-tertiary', '#e5e7eb');
+      root.style.setProperty('--text-primary', '#374151');
+      root.style.setProperty('--text-secondary', '#6b7280');
+      root.style.setProperty('--border-primary', '#d1d5db');
+      root.style.setProperty('--accent', '#3b82f6');
+    }
+
     root.style.backgroundColor = theme === 'dark' ? '#222222' : '#f3f4f6';
   }, [theme]);
   
@@ -220,7 +244,11 @@ const App: React.FC = () => {
   }, []);
 
   const toggleTheme = () => {
-    setTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
+    setTheme(prevTheme => {
+      const newTheme = prevTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('glosarium-theme', newTheme);
+      return newTheme;
+    });
   };
 
   const handleEditTerm = useCallback((term: Term) => {
@@ -283,14 +311,14 @@ const App: React.FC = () => {
   }, [currentTerms, sortMode, sortDirection, searchTerm]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen bg-[#222222] text-[#AAAAAA]">Loading Glossary...</div>;
+    return <div className="flex justify-center items-center h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">Loading Glossary...</div>;
   }
   if (error) {
-    return <div className="flex justify-center items-center h-screen bg-[#222222] text-red-500">{error}</div>;
+    return <div className="flex justify-center items-center h-screen bg-[var(--bg-primary)] text-red-500">{error}</div>;
   }
 
   return (
-    <div className="bg-[#222222] dark:bg-[#222222] text-[#AAAAAA] dark:text-[#AAAAAA] min-h-screen flex flex-col md:flex-row transition-colors">
+    <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col md:flex-row transition-colors">
         <Sidebar 
             categories={categories}
             selectedCategoryId={selectedCategoryId}
@@ -299,12 +327,12 @@ const App: React.FC = () => {
             onClose={() => setIsSidebarOpen(false)}
             onImportData={importData}
         />
-        <div className="flex-1 flex flex-col bg-[#222222] dark:bg-[#2d2d2d]/30 md:border-l border-[#656565]/30 overflow-hidden">
-            <header className="p-4 md:p-6 border-b border-[#656565]/30 flex items-center gap-2 md:gap-4 flex-wrap">
+        <div className="flex-1 flex flex-col bg-[var(--bg-primary)] md:border-l border-[var(--border-primary)]/30 overflow-hidden">
+            <header className="p-4 md:p-6 border-b border-[var(--border-primary)]/30 flex items-center gap-2 md:gap-4 flex-wrap">
                 {!isSidebarOpen && (
                      <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="p-2 rounded-full bg-[#525252] hover:bg-[#656565] text-[#AAAAAA] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                        className="p-2 rounded-full bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
                         aria-label="Open sidebar"
                     >
                         <Bars3Icon className="w-5 h-5" />
@@ -316,16 +344,16 @@ const App: React.FC = () => {
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setViewMode(prev => prev === 'list' ? 'graph' : 'list')}
-                        className="p-2 rounded-full bg-[#525252] hover:bg-[#656565] text-[#AAAAAA] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                        className="p-2 rounded-full bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
                         aria-label={`Tampilan ${viewMode === 'list' ? 'Grafik' : 'Daftar'}`}
                         title={`Beralih ke tampilan ${viewMode === 'list' ? 'Grafik' : 'Daftar'}`}
                     >
                         <GraphIcon className="w-5 h-5" />
                     </button>
-                    <div className="flex items-center gap-0.5 bg-[#2d2d2d] rounded-full p-1 border border-[#656565]/80">
+                    <div className="flex items-center gap-0.5 bg-[var(--bg-secondary)] rounded-full p-1 border border-[var(--border-primary)]/80">
                         <button
                             onClick={() => setSortMode(prev => prev === 'dependency' ? 'alphabetical' : 'dependency')}
-                            className={`px-3 py-1 rounded-full transition-all text-xs font-semibold whitespace-nowrap ${sortMode === 'dependency' ? 'bg-sky-600 text-white shadow-sm' : 'text-[#AAAAAA] hover:bg-[#525252]'}`}
+                            className={`px-3 py-1 rounded-full transition-all text-xs font-semibold whitespace-nowrap ${sortMode === 'dependency' ? 'bg-sky-600 text-white shadow-sm' : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'}`}
                             aria-label="Toggle sort mode"
                             title={`Urutkan berdasarkan ${sortMode === 'dependency' ? 'Abjad' : 'Dependensi'}`}
                         >
@@ -333,7 +361,7 @@ const App: React.FC = () => {
                         </button>
                         <button
                             onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                            className="p-1.5 rounded-full text-[#AAAAAA] hover:bg-[#525252] transition-all"
+                            className="p-1.5 rounded-full text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition-all"
                             aria-label="Toggle sort direction"
                             title={`Arah urutan ${sortDirection === 'asc' ? 'Menurun' : 'Menaik'}`}
                         >
@@ -397,7 +425,7 @@ const App: React.FC = () => {
         {editingTerm && (
             <Modal onClose={() => setEditingTerm(null)}>
                 <div className="w-full max-w-2xl p-6">
-                    <h2 className="text-xl font-bold text-white mb-4">Edit Istilah</h2>
+                    <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">Edit Istilah</h2>
                     <AddTermForm 
                         categories={categories}
                         selectedCategoryId={selectedCategoryId}
@@ -433,7 +461,7 @@ const App: React.FC = () => {
         {isAddTermMode && (
             <Modal onClose={() => setIsAddTermMode(false)}>
                 <div className="w-full max-w-2xl p-6">
-                    <h2 className="text-xl font-bold text-white mb-4">
+                    <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">
                         Tambah Istilah Baru {selectedCategoryId && categories.find(c => c.id === selectedCategoryId) ? `di "${categories.find(c => c.id === selectedCategoryId)?.name}"` : ''}
                     </h2>
                     <AddTermForm 

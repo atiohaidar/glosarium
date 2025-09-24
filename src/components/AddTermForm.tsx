@@ -140,11 +140,11 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Kategori</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Kategori</label>
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white"
+          className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)]"
           required
         >
           <option value="">Pilih kategori</option>
@@ -155,59 +155,59 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Judul</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Judul</label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white"
+          className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)]"
           placeholder="Masukkan judul istilah"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Definisi (Istilah)</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Definisi (Istilah)</label>
         <textarea
           value={istilah}
           onChange={(e) => setIstilah(e.target.value)}
-          className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
+          className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] h-20"
           placeholder="Masukkan definisi istilah"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Arti Bahasa</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Arti Bahasa</label>
         <textarea
           value={bahasa}
           onChange={(e) => setBahasa(e.target.value)}
-          className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
+          className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] h-20"
           placeholder="Masukkan arti dalam bahasa"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Alasan Keberadaan</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Alasan Keberadaan</label>
         <textarea
           value={kenapaAda}
           onChange={(e) => setKenapaAda(e.target.value)}
-          className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
+          className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] h-20"
           placeholder="Masukkan alasan keberadaan"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Contoh</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Contoh</label>
         <textarea
           value={contoh}
           onChange={(e) => setContoh(e.target.value)}
-          className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
+          className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] h-20"
           placeholder="Masukkan contoh penggunaan"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Referensi (Link)</label>
+        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Referensi (Link)</label>
         <div className="space-y-2">
           {referensi.map((ref, index) => (
             <div key={index} className="flex gap-2">
@@ -220,7 +220,7 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
                   setReferensi(newRefs);
                 }}
                 placeholder="https://example.com"
-                className="flex-1 bg-[#2d2d2d] border border-[#656565] rounded p-2 text-white text-sm"
+                                className="flex-1 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded p-2 text-[var(--text-primary)] text-sm"
               />
               <button
                 type="button"
@@ -239,7 +239,7 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
             onClick={() => {
               setReferensi([...referensi, '']);
             }}
-            className="w-full py-2 bg-[#525252] hover:bg-[#656565] text-white rounded-lg flex items-center justify-center gap-2"
+            className="w-full py-2 bg-[var(--text-secondary)] hover:bg-[var(--border-primary)] text-[var(--bg-primary)] rounded-lg flex items-center justify-center gap-2"
           >
             <PlusIcon className="w-4 h-4" />
             Tambah Referensi
@@ -257,7 +257,7 @@ export const AddTermForm: React.FC<AddTermFormProps> = ({ categories, selectedCa
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-2 bg-[#525252] hover:bg-[#656565] text-white rounded-lg"
+          className="flex-1 py-2 bg-[var(--text-secondary)] hover:bg-[var(--border-primary)] text-[var(--bg-primary)] rounded-lg"
         >
           Batal
         </button>
