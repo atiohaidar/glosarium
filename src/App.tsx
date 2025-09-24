@@ -93,9 +93,9 @@ const Sidebar: React.FC<{
             overflow-hidden
         `}>
             <div className="flex flex-col h-full min-w-[230px] md:min-w-0">
-                 <div className="flex justify-between items-center mb-4">
+                                  <div className="flex justify-between items-center mb-4">
                     <div className="flex items-center gap-2">
-                        <CodeBracketIcon className="w-8 h-8 text-sky-400"/>
+                        <img src="./PP-Tio.jpg" alt="Logo" className="w-8 h-8 rounded-full object-cover"/>
                         <h1 className="text-xl font-bold text-white">Glosarium</h1>
                     </div>
                      <button
@@ -219,9 +219,27 @@ const App: React.FC = () => {
     setTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
   };
 
+  const currentGraphData = useMemo(() => {
+    if (selectedCategoryId) {
+      return graphDataByCategory.get(selectedCategoryId) || { nodes: [], links: [] };
+    }
+    // If no category is selected, use the first category's data if available
+    if (categories.length > 0) {
+      return graphDataByCategory.get(categories[0].id) || { nodes: [], links: [] };
+    }
+    return { nodes: [], links: [] };
+  }, [selectedCategoryId, categories, graphDataByCategory]);
+
   const currentTerms = useMemo(() => {
-    return selectedCategoryId ? sortedTermsByCategory.get(selectedCategoryId) || [] : [];
-  }, [selectedCategoryId, sortedTermsByCategory]);
+    if (selectedCategoryId) {
+      return sortedTermsByCategory.get(selectedCategoryId) || [];
+    }
+    // If no category is selected, use the first category's terms if available
+    if (categories.length > 0) {
+      return sortedTermsByCategory.get(categories[0].id) || [];
+    }
+    return [];
+  }, [selectedCategoryId, categories, sortedTermsByCategory]);
 
   const displayTerms = useMemo(() => {
     let sortedTerms = [...currentTerms]; // Make a copy
@@ -316,15 +334,13 @@ const App: React.FC = () => {
                   <TermList terms={displayTerms} allTerms={currentTerms} />
                 </div>
                 <div className={viewMode === 'graph' ? 'block h-full' : 'hidden'}>
-                    {selectedCategoryId && (
-                        <DependencyGraph 
-                            graphData={graphDataByCategory.get(selectedCategoryId) || { nodes: [], links: [] }}
-                            terms={currentTerms}
-                            onNodeClick={setSelectedTermForModal}
-                            theme={theme as 'dark' | 'light'}
-                            searchTerm={searchTerm}
-                        />
-                    )}
+                    <DependencyGraph 
+                        graphData={currentGraphData}
+                        terms={currentTerms}
+                        onNodeClick={setSelectedTermForModal}
+                        theme={theme as 'dark' | 'light'}
+                        searchTerm={searchTerm}
+                    />
                 </div>
             </div>
         </div>

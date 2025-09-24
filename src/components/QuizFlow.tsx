@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Category, Term, Definitions, QuizQuestion, UserAnswer } from '../types';
-import { ArrowPathIcon, CheckCircleIcon, XCircleIcon, QuestionMarkCircleIcon, ClockIcon } from './icons';
+import { ArrowPathIcon, CheckCircleIcon, XCircleIcon, QuestionMarkCircleIcon, ClockIcon, ChevronLeftIcon, ChevronRightIcon } from './icons';
 
 // --- Utility Functions ---
 const shuffleArray = <T,>(array: T[]): T[] => {
@@ -175,18 +175,22 @@ interface QuizActiveProps {
   questionNumber: number;
   totalQuestions: number;
   startTime: number | null;
+  currentAnswer: string | null;
   onAnswer: (answer: string) => void;
+  onNavigate: (direction: 'prev' | 'next') => void;
+  canNavigatePrev: boolean;
+  canNavigateNext: boolean;
 }
 
-const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, totalQuestions, startTime, onAnswer }) => {
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-    const [isAnswered, setIsAnswered] = useState(false);
+const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, totalQuestions, startTime, currentAnswer, onAnswer, onNavigate, canNavigatePrev, canNavigateNext }) => {
+    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(currentAnswer);
+    const [isAnswered, setIsAnswered] = useState(!!currentAnswer);
     const [elapsedTime, setElapsedTime] = useState(0);
     
     useEffect(() => {
-        setSelectedAnswer(null);
-        setIsAnswered(false);
-    }, [question]);
+        setSelectedAnswer(currentAnswer);
+        setIsAnswered(!!currentAnswer);
+    }, [question, currentAnswer]);
 
     useEffect(() => {
         if (startTime === null) return;
@@ -201,9 +205,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
         if (isAnswered) return;
         setSelectedAnswer(option);
         setIsAnswered(true);
-        setTimeout(() => {
-            onAnswer(option);
-        }, 1200);
+        onAnswer(option);
     };
 
     const getButtonClass = (option: string) => {
@@ -233,6 +235,9 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                     <div className="bg-sky-500 h-2.5 rounded-full transition-all duration-300" style={{ width: `${((questionNumber-1) / totalQuestions) * 100}%` }}></div>
                 </div>
             </div>
+            
+            
+            
             <div className="text-lg text-white mb-8 min-h-[6rem] flex items-center justify-center text-center">
               <p dangerouslySetInnerHTML={{ __html: question.questionText }} />
             </div>
@@ -247,6 +252,39 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                         {option}
                     </button>
                 ))}
+            </div>
+            {/* Navigation Controls */}
+            <div className="flex items-center justify-between mt-6">
+                <button
+                    onClick={() => onNavigate('prev')}
+                    disabled={!canNavigatePrev}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#525252] text-white hover:bg-[#656565] disabled:bg-[#2d2d2d] disabled:text-[#656565] disabled:cursor-not-allowed transition-colors"
+                >
+                    <ChevronLeftIcon className="w-5 h-5" />
+                    Sebelumnya
+                </button>
+                
+                <div className="flex items-center gap-2">
+                    {Array.from({ length: totalQuestions }, (_, i) => (
+                        <div
+                            key={i}
+                            className={`w-3 h-3 rounded-full transition-colors ${
+                                i < questionNumber - 1 ? 'bg-green-500' : 
+                                i === questionNumber - 1 ? 'bg-sky-500' : 
+                                'bg-[#525252]'
+                            }`}
+                        />
+                    ))}
+                </div>
+                
+                <button
+                    onClick={() => onNavigate('next')}
+                    disabled={!canNavigateNext}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#525252] text-white hover:bg-[#656565] disabled:bg-[#2d2d2d] disabled:text-[#656565] disabled:cursor-not-allowed transition-colors"
+                >
+                    Selanjutnya
+                    <ChevronRightIcon className="w-5 h-5" />
+                </button>
             </div>
         </div>
     );
@@ -333,7 +371,7 @@ interface QuizFlowProps {
 export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCategory, onExit, selectedCategoryId }) => {
     const [step, setStep] = useState<'setup' | 'active' | 'results'>('setup');
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-    const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
+    const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [startTime, setStartTime] = useState<number | null>(null);
     const [endTime, setEndTime] = useState<number | null>(null);
@@ -395,27 +433,34 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
 
     const handleSetupSubmit = (config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random' }) => {
         generateQuestions(config);
+        setUserAnswers(new Array(config.numQuestions).fill(null));
         setStartTime(Date.now());
         setEndTime(null);
         setStep('active');
     };
 
     const handleAnswer = (answer: string) => {
-        const currentQuestion = questions[currentQuestionIndex];
-        setUserAnswers(prev => [
-            ...prev,
-            {
-                question: currentQuestion,
-                userAnswer: answer,
-                isCorrect: answer === currentQuestion.correctAnswer,
-            },
-        ]);
+        setUserAnswers(prev => {
+            const newAnswers = [...prev];
+            newAnswers[currentQuestionIndex] = answer;
+            return newAnswers;
+        });
+    };
 
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(prev => prev + 1);
-        } else {
-            setEndTime(Date.now());
-            setStep('results');
+    const handleNavigate = (direction: 'prev' | 'next') => {
+        if (direction === 'prev' && currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(prev => prev - 1);
+        } else if (direction === 'next') {
+            if (currentQuestionIndex < questions.length - 1) {
+                setCurrentQuestionIndex(prev => prev + 1);
+            } else {
+                // Jika sudah di pertanyaan terakhir dan semua sudah dijawab, selesai kuis
+                const allAnswered = userAnswers.every(answer => answer !== null);
+                if (allAnswered) {
+                    setEndTime(Date.now());
+                    setStep('results');
+                }
+            }
         }
     };
     
@@ -447,12 +492,21 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                         questionNumber={currentQuestionIndex + 1}
                         totalQuestions={questions.length}
                         startTime={startTime}
+                        currentAnswer={userAnswers[currentQuestionIndex]}
                         onAnswer={handleAnswer}
+                        onNavigate={handleNavigate}
+                        canNavigatePrev={currentQuestionIndex > 0}
+                        canNavigateNext={currentQuestionIndex < questions.length - 1 || userAnswers.every(answer => answer !== null)}
                     />
                 );
             case 'results':
+                const results: UserAnswer[] = questions.map((question, index) => ({
+                    question,
+                    userAnswer: userAnswers[index] || '',
+                    isCorrect: (userAnswers[index] || '') === question.correctAnswer,
+                }));
                 const duration = endTime && startTime ? endTime - startTime : 0;
-                return <QuizResults results={userAnswers} durationMs={duration} onRestart={handleRestart} onExit={onExit} />;
+                return <QuizResults results={results} durationMs={duration} onRestart={handleRestart} onExit={onExit} />;
             default:
                 return null;
         }
