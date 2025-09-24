@@ -42,18 +42,18 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
            .attr('height', height)
            .attr('viewBox', [-width / 2, -height / 2, width, height]);
 
-        // Add definitions for arrowheads
-        svg.append('defs').append('marker')
-            .attr('id', 'arrowhead')
-            .attr('viewBox', '-0 -5 10 10')
-            .attr('refX', 18)
-            .attr('refY', 0)
-            .attr('orient', 'auto')
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
-            .append('path')
-            .attr('d', 'M0,-5L10,0L0,5')
-            .attr('fill', '#656565');
+        // Add definitions for arrowheads (removed - using direct paths now)
+        // svg.append('defs').append('marker')
+        //     .attr('id', 'arrowhead')
+        //     .attr('viewBox', '-0 -5 10 10')
+        //     .attr('refX', 18)
+        //     .attr('refY', 0)
+        //     .attr('orient', 'auto')
+        //     .attr('markerWidth', 6)
+        //     .attr('markerHeight', 6)
+        //     .append('path')
+        //     .attr('d', 'M0,-5L10,0L0,5')
+        //     .attr('fill', '#656565');
 
         const g = svg.append("g");
 
@@ -69,8 +69,18 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             .data(dataLinks)
             .join("line")
             .attr("stroke", "#656565")
-            .attr("stroke-width", 1.5)
-            .attr('marker-end', 'url(#arrowhead)');
+            .attr("stroke-width", 1.5);
+        
+        // Add arrow markers in the middle of links
+        const arrow = g.append("g")
+            .selectAll("path")
+            .data(dataLinks)
+            .join("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", "#656565")
+            .attr("stroke", "none")
+            .attr("stroke-width", 0)
+            .style("pointer-events", "none");
         
         const node = g.append("g")
             .selectAll("circle")
@@ -119,6 +129,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
 
         node.style('transition', 'opacity 0.3s, fill 0.3s');
         link.style('transition', 'stroke-opacity 0.3s, stroke 0.3s');
+        arrow.style('transition', 'fill 0.3s');
         label.style('transition', 'opacity 0.3s');
 
         if (isSearching) {
@@ -126,6 +137,8 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             node.attr('fill', (d: any) => searchResults.has(d.id) ? '#0ea5e9' : '#2d2d2d');
             label.attr('opacity', (d: any) => searchResults.has(d.id) ? 1.0 : 0.1);
             link.attr('stroke-opacity', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? 0.8 : 0.05);
+            arrow.attr('fill', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? '#0ea5e9' : '#656565');
+            arrow.attr('opacity', (d: any) => searchResults.has(d.source.id) && searchResults.has(d.target.id) ? 1.0 : 0.1);
         } else {
             handleMouseOut(); // Reset to default state if search is cleared
         }
@@ -136,6 +149,8 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             link.transition().duration(100)
                 .attr("stroke", (l: any) => l.source.id === d.id || l.target.id === d.id ? "#0ea5e9" : "#656565")
                 .attr("stroke-opacity", (l: any) => l.source.id === d.id || l.target.id === d.id ? 1.0 : 0.3);
+            arrow.transition().duration(100)
+                .attr("fill", (l: any) => l.source.id === d.id || l.target.id === d.id ? "#0ea5e9" : "#656565");
             label.transition().duration(100).attr("opacity", (n: any) => isConnected(d, n) ? 1.0 : 0.2);
         }
 
@@ -143,6 +158,7 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
             if (isSearching) return; // Disable hover when searching
             node.transition().duration(200).attr("opacity", 1.0).attr('fill', '#2d2d2d');
             link.transition().duration(200).attr("stroke", "#656565").attr("stroke-opacity", 0.6);
+            arrow.transition().duration(200).attr("fill", "#656565");
             label.transition().duration(200).attr("opacity", 1.0);
         }
         
@@ -154,6 +170,23 @@ export const DependencyGraph: React.FC<DependencyGraphProps> = ({ graphData, ter
                 .attr("y1", (d: any) => d.source.y)
                 .attr("x2", (d: any) => d.target.x)
                 .attr("y2", (d: any) => d.target.y);
+            
+            // Update arrow positions to the middle of links
+            arrow
+                .attr("transform", (d: any) => {
+                    const sourceX = d.source.x;
+                    const sourceY = d.source.y;
+                    const targetX = d.target.x;
+                    const targetY = d.target.y;
+                    const midX = (sourceX + targetX) / 2;
+                    const midY = (sourceY + targetY) / 2;
+                    
+                    // Calculate angle for arrow rotation
+                    const angle = Math.atan2(targetY - sourceY, targetX - sourceX) * 180 / Math.PI;
+                    
+                    return `translate(${midX}, ${midY}) rotate(${angle})`;
+                });
+            
             node
                 .attr("cx", (d: any) => d.x)
                 .attr("cy", (d: any) => d.y);
