@@ -3,9 +3,10 @@ import React, { useEffect, useRef } from 'react';
 interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
+  isOpen?: boolean;
 }
 
-export const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
+export const Modal: React.FC<ModalProps> = ({ onClose, children, isOpen = true }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,6 +25,8 @@ export const Modal: React.FC<ModalProps> = ({ onClose, children }) => {
       onClose();
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div

@@ -39,15 +39,28 @@ export const useGlossary = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Load data from localStorage first, then fallback to default file
   useEffect(() => {
-    const fetchGlossaryData = async () => {
+    const loadGlossaryData = async () => {
       try {
+        // First, try to load from localStorage
+        const localData = localStorage.getItem('glosarium-data');
+        if (localData) {
+          const parsedData = JSON.parse(localData);
+          setData(parsedData);
+          setLoading(false);
+          return;
+        }
+
+        // If no localStorage data, load from default file
         const response = await fetch('./data/glossary.json');
         if (!response.ok) {
           throw new Error(`Failed to fetch: ${response.statusText}`);
         }
         const jsonData = await response.json();
         setData(jsonData as GlossaryData);
+        // Save to localStorage for future use
+        localStorage.setItem('glosarium-data', JSON.stringify(jsonData));
       } catch (e) {
         setError('Failed to load glossary data.');
         console.error(e);
@@ -56,7 +69,7 @@ export const useGlossary = () => {
       }
     };
 
-    fetchGlossaryData();
+    loadGlossaryData();
   }, []);
 
   const categories = useMemo(() => data.categories, [data]);
@@ -123,6 +136,7 @@ export const useGlossary = () => {
   const loadCustomGlossary = useCallback((customData: GlossaryData) => {
     if (customData && Array.isArray(customData.categories)) {
         setData(customData);
+        localStorage.setItem('glosarium-data', JSON.stringify(customData));
         setError(null);
     } else {
         setError("Invalid glossary file format.");
@@ -131,5 +145,189 @@ export const useGlossary = () => {
     }
   }, []);
 
-  return { categories, loading, error, getCategoryById, sortedTermsByCategory, loadCustomGlossary, graphDataByCategory };
+  // CRUD Functions
+  const addCategory = useCallback((name: string) => {
+    const newCategory: Category = {
+      id: `cat-${Date.now()}`,
+      name,
+      terms: []
+    };
+    setData(prev => {
+      const newData = { ...prev, categories: [...prev.categories, newCategory] };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const updateCategory = useCallback((id: string, name: string) => {
+    setData(prev => {
+      const newData = {
+        ...prev,
+        categories: prev.categories.map(cat =>
+          cat.id === id ? { ...cat, name } : cat
+        )
+      };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const deleteCategory = useCallback((id: string) => {
+    setData(prev => {
+      const newData = {
+        ...prev,
+        categories: prev.categories.filter(cat => cat.id !== id)
+      };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const addTerm = useCallback((categoryId: string, term: Omit<Term, 'id'>) => {
+    const newTerm: Term = {
+      ...term,
+      id: `term-${Date.now()}`
+    };
+    setData(prev => {
+      const newData = {
+        ...prev,
+        categories: prev.categories.map(cat =>
+          cat.id === categoryId
+            ? { ...cat, terms: [...cat.terms, newTerm] }
+            : cat
+        )
+      };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const updateTerm = useCallback((categoryId: string, termId: string, updates: Partial<Term>) => {
+    setData(prev => {
+      const newData = {
+        ...prev,
+        categories: prev.categories.map(cat =>
+          cat.id === categoryId
+            ? {
+                ...cat,
+                terms: cat.terms.map(term =>
+                  term.id === termId ? { ...term, ...updates } : term
+                )
+              }
+            : cat
+        )
+      };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const deleteTerm = useCallback((categoryId: string, termId: string) => {
+    setData(prev => {
+      const newData = {
+        ...prev,
+        categories: prev.categories.map(cat =>
+          cat.id === categoryId
+            ? { ...cat, terms: cat.terms.filter(term => term.id !== termId) }
+            : cat
+        )
+      };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const bulkAddTerms = useCallback((categoryId: string, terms: Omit<Term, 'id'>[]) => {
+    const newTerms: Term[] = terms.map(term => ({
+      ...term,
+      id: `term-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    }));
+    setData(prev => {
+      const newData = {
+        ...prev,
+        categories: prev.categories.map(cat =>
+          cat.id === categoryId
+            ? { ...cat, terms: [...cat.terms, ...newTerms] }
+            : cat
+        )
+      };
+      localStorage.setItem('glosarium-data', JSON.stringify(newData));
+      return newData;
+    });
+  }, []);
+
+  const exportData = useCallback(() => {
+    return JSON.stringify(data, null, 2);
+  }, [data]);
+
+  const importData = useCallback((jsonString: string) => {
+    try {
+      const parsedData = JSON.parse(jsonString);
+      if (parsedData && Array.isArray(parsedData.categories)) {
+        setData(parsedData);
+        localStorage.setItem('glosarium-data', jsonString);
+        setError(null);
+        return true;
+      } else {
+        setError("Invalid glossary file format.");
+        return false;
+      }
+    } catch (e) {
+      setError("Invalid JSON format.");
+      return false;
+    }
+  }, []);
+
+  const resetToDefault = useCallback(async () => {
+    try {
+      const response = await fetch('./data/glossary.json');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+      const defaultData = await response.json();
+      setData(defaultData);
+      localStorage.setItem('glosarium-data', JSON.stringify(defaultData));
+      setError(null);
+    } catch (e) {
+      setError('Failed to reset to default data.');
+    }
+  }, []);
+
+  const clearLocalData = useCallback(async () => {
+    try {
+      const response = await fetch('./data/glossary.json');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+      const defaultData = await response.json();
+      setData(defaultData);
+      localStorage.removeItem('glosarium-data');
+      setError(null);
+    } catch (e) {
+      setError('Failed to clear local data.');
+    }
+  }, []);
+
+  return {
+    categories,
+    loading,
+    error,
+    getCategoryById,
+    sortedTermsByCategory,
+    loadCustomGlossary,
+    graphDataByCategory,
+    // CRUD functions
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    addTerm,
+    updateTerm,
+    deleteTerm,
+    bulkAddTerms,
+    // Import/Export functions
+    exportData,
+    importData,
+    resetToDefault,
+    clearLocalData
+  };
 };

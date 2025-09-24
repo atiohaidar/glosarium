@@ -5,6 +5,7 @@ import { TermCard } from './components/TermCard';
 import { QuizFlow } from './components/QuizFlow';
 import { DependencyGraph } from './components/DependencyGraph';
 import { Modal } from './components/Modal';
+import { DataManagement } from './components/DataManagement';
 import { 
     SearchIcon, SunIcon, MoonIcon, CodeBracketIcon, 
     ChevronDoubleLeftIcon, Bars3Icon, QuestionMarkCircleIcon, 
@@ -44,8 +45,8 @@ const Sidebar: React.FC<{
     onSelectCategory: (id: string) => void;
     isOpen: boolean;
     onClose: () => void;
-    onUploadGlossary: (data: GlossaryData) => void;
-}> = ({ categories, selectedCategoryId, onSelectCategory, isOpen, onClose, onUploadGlossary }) => {
+    onImportData: (jsonString: string) => boolean;
+}> = ({ categories, selectedCategoryId, onSelectCategory, isOpen, onClose, onImportData }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleUploadClick = () => {
@@ -63,13 +64,10 @@ const Sidebar: React.FC<{
                 if (typeof text !== 'string') {
                     throw new Error("Could not read file content.");
                 }
-                const jsonData = JSON.parse(text);
-                // Basic validation
-                if (jsonData && Array.isArray(jsonData.categories)) {
-                    onUploadGlossary(jsonData);
+                if (onImportData(text)) {
                     alert("Glosarium berhasil dimuat!");
                 } else {
-                    throw new Error("Invalid JSON format: 'categories' array not found.");
+                    throw new Error("Invalid JSON format.");
                 }
             } catch (error) {
                 console.error("Failed to load or parse glossary file:", error);
@@ -121,22 +119,7 @@ const Sidebar: React.FC<{
                         </button>
                     ))}
                 </nav>
-                 <div className="mt-4 pt-4 border-t border-[#656565]/30">
-                     <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        accept=".json"
-                        className="hidden"
-                    />
-                    <button
-                        onClick={handleUploadClick}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 text-left rounded-md transition-all duration-200 text-sm md:text-base bg-[#525252] text-[#AAAAAA] hover:bg-[#656565] hover:text-white"
-                    >
-                        <ArrowUpTrayIcon className="w-5 h-5"/>
-                        Unggah Glosarium
-                    </button>
-                </div>
+          
             </div>
         </aside>
     );
@@ -161,7 +144,25 @@ const TermList: React.FC<{ terms: Term[]; allTerms: Term[] }> = ({ terms, allTer
 // --- Main App Component ---
 
 const App: React.FC = () => {
-  const { categories, loading, error, sortedTermsByCategory, loadCustomGlossary, graphDataByCategory } = useGlossary();
+  const {
+    categories,
+    loading,
+    error,
+    sortedTermsByCategory,
+    loadCustomGlossary,
+    graphDataByCategory,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    addTerm,
+    updateTerm,
+    deleteTerm,
+    bulkAddTerms,
+    exportData,
+    importData,
+    resetToDefault,
+    clearLocalData
+  } = useGlossary();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [theme, setTheme] = useState('dark');
@@ -281,7 +282,7 @@ const App: React.FC = () => {
             onSelectCategory={setSelectedCategoryId}
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
-            onUploadGlossary={loadCustomGlossary}
+            onImportData={importData}
         />
         <div className="flex-1 flex flex-col bg-[#222222] dark:bg-[#2d2d2d]/30 md:border-l border-[#656565]/30 overflow-hidden">
             <header className="p-4 md:p-6 border-b border-[#656565]/30 flex items-center gap-2 md:gap-4 flex-wrap">
@@ -376,6 +377,22 @@ const App: React.FC = () => {
                 </div>
             </Modal>
         )}
+
+        {/* Data Management */}
+        <DataManagement
+          categories={categories}
+          onAddCategory={addCategory}
+          onUpdateCategory={updateCategory}
+          onDeleteCategory={deleteCategory}
+          onAddTerm={addTerm}
+          onUpdateTerm={updateTerm}
+          onDeleteTerm={deleteTerm}
+          onBulkAddTerms={bulkAddTerms}
+          onExportData={exportData}
+          onImportData={importData}
+          onResetToDefault={resetToDefault}
+          onClearLocalData={clearLocalData}
+        />
     </div>
   );
 };
