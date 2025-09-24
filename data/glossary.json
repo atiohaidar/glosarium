@@ -1,0 +1,388 @@
+
+{
+    "categories": [
+        {
+            "id": "backend",
+            "name": "Backend",
+            "terms": [
+                {
+                    "id": "fullstack",
+                    "title": "Fullstack",
+                    "definitions": {
+                        "bahasa": "Full = penuh, Stack = tumpukan → menguasai semua lapisan.",
+                        "istilah": "Orang yang bisa mengerjakan frontend dan backend sekaligus."
+                    }
+                },
+                {
+                    "id": "backend",
+                    "title": "Backend",
+                    "definitions": {
+                        "bahasa": "Back = belakang, End = ujung → bagian belakang dari sistem.",
+                        "istilah": "Bagian dari aplikasi yang bekerja di server, mengatur data, logika, dan komunikasi.",
+                        "kenapaAda": "Supaya aplikasi bisa menyimpan data dan melakukan perhitungan yang tidak mungkin dilakukan di browser.",
+                        "contoh": "Login, database, API."
+                    }
+                },
+                {
+                    "id": "frontend",
+                    "title": "Frontend",
+                    "definitions": {
+                        "bahasa": "Front = depan, End = ujung → bagian depan dari sistem.",
+                        "istilah": "Bagian aplikasi yang dilihat user langsung di layar."
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ml",
+            "name": "Machine Learning",
+            "terms": [
+                {
+                    "id": "ai",
+                    "title": "Artificial Intelligence",
+                    "definitions": {
+                        "bahasa": "Artificial = buatan, Intelligence = kecerdasan → kecerdasan buatan.",
+                        "istilah": "Kemampuan komputer untuk meniru kecerdasan manusia."
+                    }
+                }
+            ]
+        },
+        {
+            "id": "web3",
+            "name": "Web3",
+            "terms": [
+                {
+                    "id": "blockchain",
+                    "title": "Blockchain",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Sistem database terdistribusi yang menyimpan data dalam \"blok\" yang saling terhubung dan tidak bisa diubah.",
+                        "contoh": "Bitcoin adalah blockchain pertama."
+                    }
+                },
+                {
+                    "id": "web3",
+                    "title": "Web3",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Generasi internet berikutnya yang fokus pada desentralisasi, bukan server pusat.",
+                        "contoh": "App seperti Fradium yang jalan di blockchain tanpa kontrol perusahaan besar."
+                    }
+                },
+                {
+                    "id": "smart_contract",
+                    "title": "Smart Contract",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Kode program yang berjalan otomatis di blockchain saat kondisi terpenuhi."
+                    }
+                },
+                {
+                    "id": "dapp",
+                    "title": "dApp (Decentralized Application)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "App yang jalan di blockchain, bukan server pusat.",
+                        "contoh": "Fradium sendiri adalah dApp untuk analisis crypto."
+                    }
+                },
+                {
+                    "id": "token",
+                    "title": "Token",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Unit nilai di blockchain (fungible atau non-fungible).",
+                        "contoh": "Bitcoin adalah token, bisa dipertukarkan."
+                    }
+                },
+                {
+                    "id": "nft",
+                    "title": "NFT (Non-Fungible Token)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Aset digital unik (seperti gambar atau musik) di blockchain.",
+                        "contoh": "Gambar digital yang tidak bisa digandakan."
+                    }
+                },
+                {
+                    "id": "wallet",
+                    "title": "Wallet (Crypto Wallet)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Dompet digital untuk simpan dan kirim crypto.",
+                        "contoh": "MetaMask untuk Ethereum."
+                    }
+                },
+                {
+                    "id": "address",
+                    "title": "Address (Wallet Address)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Alamat unik untuk kirim/terima crypto, seperti rekening bank.",
+                        "contoh": "0x123...abc di Ethereum."
+                    }
+                },
+                {
+                    "id": "defi",
+                    "title": "DeFi (Decentralized Finance)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Sistem keuangan tanpa bank, pakai blockchain.",
+                        "contoh": "Pinjam uang tanpa bank via smart contract."
+                    }
+                },
+                {
+                    "id": "dex",
+                    "title": "DEX (Decentralized Exchange)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Exchange crypto tanpa pusat, pakai smart contract.",
+                        "contoh": "Uniswap, di mana user swap token langsung tanpa perantara."
+                    }
+                },
+                {
+                    "id": "dao",
+                    "title": "DAO (Decentralized Autonomous Organization)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Organisasi tanpa pemimpin, dijalankan oleh voting komunitas.",
+                        "contoh": "Komunitas yang vote keputusan via token."
+                    }
+                },
+                {
+                    "id": "on_chain",
+                    "title": "On-Chain",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Data atau proses yang terjadi langsung di blockchain (transparan dan immutable).",
+                        "contoh": "Transaksi yang tercatat di blockchain."
+                    }
+                },
+                {
+                    "id": "off_chain",
+                    "title": "Off-Chain",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Proses di luar blockchain (lebih cepat tapi kurang aman).",
+                        "contoh": "Hitung skor AI di server biasa."
+                    }
+                },
+                {
+                    "id": "immutable",
+                    "title": "Immutable",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Data yang tidak bisa diubah setelah dibuat.",
+                        "contoh": "Riwayat transaksi di blockchain tidak bisa dihapus."
+                    }
+                },
+                {
+                    "id": "gas_fee",
+                    "title": "Gas Fee",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Biaya untuk transaksi di blockchain.",
+                        "contoh": "Bayar fee untuk kirim ETH."
+                    }
+                },
+                {
+                    "id": "consensus_mechanism",
+                    "title": "Consensus Mechanism",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Cara blockchain setuju transaksi (misal Proof of Work atau Proof of Stake).",
+                        "contoh": "Ethereum pakai PoS, di mana validator \"taruh\" token untuk validasi."
+                    }
+                },
+                {
+                    "id": "merkle_tree",
+                    "title": "Merkle Tree",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Struktur data pohon untuk verifikasi data cepat di blockchain.",
+                        "contoh": "Bitcoin pakai ini untuk bukti transaksi tanpa download seluruh blockchain."
+                    }
+                },
+                {
+                    "id": "layer_2",
+                    "title": "Layer 2",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Solusi untuk bikin blockchain lebih cepat (skalabilitas).",
+                        "contoh": "Lightning Network untuk Bitcoin, bikin transaksi mikro cepat."
+                    }
+                },
+                {
+                    "id": "bridge",
+                    "title": "Bridge",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Alat untuk transfer asset antar blockchain.",
+                        "contoh": "Transfer ETH ke BSC via bridge."
+                    }
+                },
+                {
+                    "id": "multi_chain",
+                    "title": "Multi-Chain",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Mendukung banyak blockchain sekaligus.",
+                        "contoh": "Wallet yang handle Bitcoin dan ETH."
+                    }
+                },
+                {
+                    "id": "oracle",
+                    "title": "Oracle",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Layanan yang bawa data dunia nyata ke blockchain.",
+                        "contoh": "Harga saham dari API ke smart contract."
+                    }
+                },
+                {
+                    "id": "staking",
+                    "title": "Staking",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Mengunci token untuk dapat reward.",
+                        "contoh": "Taruh token di validator untuk dapat interest."
+                    }
+                },
+                {
+                    "id": "yield_farming",
+                    "title": "Yield Farming",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Cara dapat reward dengan staking token di DeFi.",
+                        "contoh": "Deposit token di pool farming untuk dapat token baru sebagai reward."
+                    }
+                },
+                {
+                    "id": "flash_loan",
+                    "title": "Flash Loan",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Pinjaman instan tanpa collateral, harus balik dalam satu transaksi.",
+                        "contoh": "Pinjam 100 ETH dari Aave tanpa jaminan, tapi harus balik plus fee dalam blok yang sama."
+                    }
+                },
+                {
+                    "id": "zero_knowledge_proof",
+                    "title": "Zero-Knowledge Proof",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Bukti matematis tanpa reveal data asli.",
+                        "contoh": "ZK-SNARK di Zcash, bukti kamu punya uang tanpa tunjukkan jumlahnya."
+                    }
+                },
+                {
+                    "id": "scam",
+                    "title": "Scam/Rug Pull/Phishing/Drainer",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Jenis penipuan crypto (scam=penipuan umum, rug pull=proyek kabur, phishing=jebakan link, drainer=curi wallet).",
+                        "contoh": "Link phishing yang minta password wallet."
+                    }
+                },
+                {
+                    "id": "internet_computer",
+                    "title": "Internet Computer (IC)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Platform blockchain yang bisa jalankan app web penuh tanpa server tradisional.",
+                        "contoh": "Jalankan website langsung di blockchain."
+                    }
+                },
+                {
+                    "id": "canister",
+                    "title": "Canister",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Smart contract di IC, seperti container yang simpan kode dan data."
+                    }
+                },
+                {
+                    "id": "motoko",
+                    "title": "Motoko",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Bahasa pemrograman khusus untuk IC, mirip Rust tapi lebih sederhana.",
+                        "contoh": "Kode canister ditulis di Motoko."
+                    }
+                },
+                {
+                    "id": "principal",
+                    "title": "Principal",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "ID unik untuk user atau canister di IC.",
+                        "contoh": "ID seperti username di IC."
+                    }
+                },
+                {
+                    "id": "cycles",
+                    "title": "Cycles",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "\\\"Mata uang\\\" di IC untuk bayar komputasi (seperti gas fee di ETH).",
+                        "contoh": "Bayar cycles untuk run canister."
+                    }
+                },
+                {
+                    "id": "dfx",
+                    "title": "dfx",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Command-line tool untuk develop di IC (seperti npm untuk Node.js).",
+                        "contoh": "`dfx deploy` untuk upload canister."
+                    }
+                },
+                {
+                    "id": "icrc_1",
+                    "title": "ICRC-1",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Standar token di IC, mirip ERC-20 di Ethereum.",
+                        "contoh": "Token yang ikut standar ICRC-1 bisa dipertukarkan."
+                    }
+                },
+                {
+                    "id": "wasm",
+                    "title": "WASM (WebAssembly)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Format bytecode untuk run kode di browser/web.",
+                        "contoh": "Kode yang compile ke WASM jalan cepat di web."
+                    }
+                },
+                {
+                    "id": "icp",
+                    "title": "ICP (Internet Computer Protocol)",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Protokol dasar IC untuk jaringan dan canister.",
+                        "contoh": "ICP handle komunikasi antar canister."
+                    }
+                },
+                {
+                    "id": "candid",
+                    "title": "Candid",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Bahasa untuk deskripsi interface canister di IC.",
+                        "contoh": "Candid define fungsi seperti \\\"analyze_address\\\"."
+                    }
+                },
+                {
+                    "id": "replica",
+                    "title": "Replica",
+                    "definitions": {
+                        "bahasa": "-",
+                        "istilah": "Node (komputer) di IC yang jalankan dan simpan canister.",
+                        "contoh": "Replica di seluruh dunia pastikan app selalu online."
+                    }
+                }
+            ]
+        }
+    ]
+}

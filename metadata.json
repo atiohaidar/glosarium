@@ -1,0 +1,5 @@
+{
+  "name": "Glosarium Istilah Teknis",
+  "description": "An interactive and modern web application for browsing technical terms across different categories like Backend, Machine Learning, and Web3. Features include dependency-based sorting, clickable term linking, search, and a dark/light theme.",
+  "requestFramePermissions": []
+}
