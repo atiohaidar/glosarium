@@ -67,7 +67,7 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDe
   };
 
   return (
-    <div id={`term-${term.id}`} className="bg-[var(--bg-tertiary)]/30 p-6 rounded-xl border border-[var(--border-primary)]/30 transition-all duration-300 hover:border-[var(--accent)]/70 hover:shadow-lg hover:shadow-[var(--accent)]/10 relative">
+    <div id={`term-${term.id}`} className="bg-[var(--bg-tertiary)] p-6 rounded-xl border border-[var(--border-primary)]/30 transition-all duration-300 hover:border-[var(--accent)] hover:shadow-xl hover:shadow-[var(--accent)]/20 hover:bg-[var(--bg-secondary)] hover:scale-[1.02] relative">
       {/* Edit and Delete buttons */}
       {(onEdit || onDelete) && (
         <div className="absolute top-4 right-4 flex gap-2">

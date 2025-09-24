@@ -197,24 +197,24 @@ const App: React.FC = () => {
 
     // Update CSS variables for custom colors
     if (theme === 'dark') {
-      root.style.setProperty('--bg-primary', '#222222');
-      root.style.setProperty('--bg-secondary', '#2d2d2d');
-      root.style.setProperty('--bg-tertiary', '#494949');
-      root.style.setProperty('--text-primary', '#AAAAAA');
-      root.style.setProperty('--text-secondary', '#656565');
-      root.style.setProperty('--border-primary', '#656565');
+      root.style.setProperty('--bg-primary', '#1a1a1a');
+      root.style.setProperty('--bg-secondary', '#2a2a2a');
+      root.style.setProperty('--bg-tertiary', '#3a3a3a');
+      root.style.setProperty('--text-primary', '#e5e5e5');
+      root.style.setProperty('--text-secondary', '#a0a0a0');
+      root.style.setProperty('--border-primary', '#404040');
       root.style.setProperty('--accent', '#0ea5e9');
     } else {
-      root.style.setProperty('--bg-primary', '#f3f4f6');
+      root.style.setProperty('--bg-primary', '#f8fafc');
       root.style.setProperty('--bg-secondary', '#ffffff');
-      root.style.setProperty('--bg-tertiary', '#e5e7eb');
-      root.style.setProperty('--text-primary', '#374151');
-      root.style.setProperty('--text-secondary', '#6b7280');
-      root.style.setProperty('--border-primary', '#d1d5db');
+      root.style.setProperty('--bg-tertiary', '#f1f5f9');
+      root.style.setProperty('--text-primary', '#1e293b');
+      root.style.setProperty('--text-secondary', '#64748b');
+      root.style.setProperty('--border-primary', '#e2e8f0');
       root.style.setProperty('--accent', '#3b82f6');
     }
 
-    root.style.backgroundColor = theme === 'dark' ? '#222222' : '#f3f4f6';
+    root.style.backgroundColor = theme === 'dark' ? '#1a1a1a' : '#f8fafc';
   }, [theme]);
   
   // Effect for highlighting term cards on internal link clicks
