@@ -415,6 +415,7 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
                 bahasa: 'Istilah untuk arti bahasa:<br/>',
                 kenapaAda: 'Istilah untuk alasan:<br/>',
                 contoh: 'Istilah untuk contoh:<br/>',
+                referensi: 'Istilah untuk referensi:<br/>',
             };
             
             const prefix = quizType === 'random' ? questionTextPrefixMap[questionKey] : questionTextPrefixMap[quizType];

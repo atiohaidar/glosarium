@@ -50,7 +50,18 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms }) => {
     bahasa: 'Bahasa',
     istilah: 'Istilah',
     kenapaAda: 'Kenapa Ada',
-    contoh: 'Contoh'
+    contoh: 'Contoh',
+    referensi: 'Referensi'
+  };
+
+  // Function to extract domain from URL
+  const extractDomain = (url: string) => {
+    try {
+      const domain = new URL(url).hostname;
+      return domain.startsWith('www.') ? domain.slice(4) : domain;
+    } catch {
+      return url; // Fallback if invalid URL
+    }
   };
 
   return (
@@ -79,6 +90,25 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms }) => {
             </div>
           );
         })}
+
+        {/* References */}
+        {term.definitions.referensi && term.definitions.referensi.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-[120px_1fr] gap-x-4 gap-y-1">
+            <dt className="font-semibold text-sm text-slate-400 dark:text-slate-300">Referensi:</dt>
+            <dd className="flex flex-wrap gap-2">
+              {term.definitions.referensi.map((source, index) => (
+                <button
+                  key={index}
+                  onClick={() => window.open(source, '_blank')}
+                  className="inline-flex items-center px-3 py-1 text-xs bg-[#3a3a3a] hover:bg-[#4a4a4a] text-gray-300 rounded-full transition-colors cursor-pointer border border-[#656565]/30"
+                  title={source} // Show full URL on hover
+                >
+                  {extractDomain(source)}
+                </button>
+              ))}
+            </dd>
+          </div>
+        )}
       </div>
     </div>
   );

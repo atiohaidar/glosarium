@@ -36,9 +36,9 @@ export const DataManagement: React.FC<DataManagementProps> = ({
   const [activeTab, setActiveTab] = useState<'categories' | 'terms' | 'import-export'>('categories');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingTerm, setEditingTerm] = useState<{ term: Term; categoryId: string } | null>(null);
-  const [newTerm, setNewTerm] = useState<{ title: string; definitions: { istilah: string; bahasa: string; kenapaAda: string; contoh: string } }>({
+  const [newTerm, setNewTerm] = useState<{ title: string; definitions: { istilah: string; bahasa: string; kenapaAda: string; contoh: string; referensi: string[] } }>({
     title: '',
-    definitions: { istilah: '', bahasa: '', kenapaAda: '', contoh: '' }
+    definitions: { istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [] }
   });
   const [newCategoryName, setNewCategoryName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
@@ -216,8 +216,8 @@ export const DataManagement: React.FC<DataManagementProps> = ({
             </select>
             <button
               onClick={() => {
-                setNewTerm({ title: '', definitions: { istilah: '', bahasa: '', kenapaAda: '', contoh: '' } });
-                setEditingTerm({ term: { id: 'new', title: '', definitions: {} }, categoryId: selectedCategoryId });
+                setNewTerm({ title: '', definitions: { istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [] } });
+                setEditingTerm({ term: { id: 'new', title: '', definitions: { referensi: [] } }, categoryId: selectedCategoryId });
               }}
               disabled={!selectedCategoryId}
               className="px-4 py-2 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white rounded-lg flex items-center gap-2"
@@ -313,6 +313,24 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
                       <div>Bahasa: {term.definitions.bahasa || '-'}</div>
                       <div>Alasan: {term.definitions.kenapaAda || '-'}</div>
                       <div>Contoh: {term.definitions.contoh || '-'}</div>
+                      {term.definitions.referensi && term.definitions.referensi.length > 0 && (
+                        <div className="mt-2">
+                          <span className="font-medium">Referensi:</span>
+                          <div className="ml-2 space-y-1">
+                            {term.definitions.referensi.map((ref, idx) => (
+                              <a
+                                key={idx}
+                                href={ref}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block text-sky-400 hover:text-sky-300 underline text-xs break-all"
+                              >
+                                {ref}
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -528,6 +546,63 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
                   })}
                   className="w-full bg-[#2d2d2d] border border-[#656565] rounded-lg p-3 text-white h-20"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#AAAAAA] mb-2">Referensi (Link)</label>
+                <div className="space-y-2">
+                  {(editingTerm.term.definitions.referensi || []).map((ref, index) => (
+                    <div key={index} className="flex gap-2">
+                      <input
+                        type="url"
+                        value={ref}
+                        onChange={(e) => {
+                          const newRefs = [...(editingTerm.term.definitions.referensi || [])];
+                          newRefs[index] = e.target.value;
+                          setEditingTerm({
+                            ...editingTerm,
+                            term: {
+                              ...editingTerm.term,
+                              definitions: { ...editingTerm.term.definitions, referensi: newRefs }
+                            }
+                          });
+                        }}
+                        placeholder="https://example.com"
+                        className="flex-1 bg-[#1a1a1a] border border-[#656565] rounded p-2 text-white text-sm"
+                      />
+                      <button
+                        onClick={() => {
+                          const newRefs = (editingTerm.term.definitions.referensi || []).filter((_, i) => i !== index);
+                          setEditingTerm({
+                            ...editingTerm,
+                            term: {
+                              ...editingTerm.term,
+                              definitions: { ...editingTerm.term.definitions, referensi: newRefs }
+                            }
+                          });
+                        }}
+                        className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-sm"
+                      >
+                        <TrashIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newRefs = [...(editingTerm.term.definitions.referensi || []), ''];
+                      setEditingTerm({
+                        ...editingTerm,
+                        term: {
+                          ...editingTerm.term,
+                          definitions: { ...editingTerm.term.definitions, referensi: newRefs }
+                        }
+                      });
+                    }}
+                    className="w-full py-2 bg-[#525252] hover:bg-[#656565] text-white rounded-lg flex items-center justify-center gap-2"
+                  >
+                    <PlusIcon className="w-4 h-4" />
+                    Tambah Referensi
+                  </button>
+                </div>
               </div>
             </div>
             <div className="flex gap-3 mt-6">

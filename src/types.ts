@@ -4,6 +4,7 @@ export interface Definitions {
   istilah?: string;
   kenapaAda?: string;
   contoh?: string;
+  referensi?: string[];
 }
 
 export interface Term {
