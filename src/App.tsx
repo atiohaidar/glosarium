@@ -254,10 +254,6 @@ const App: React.FC = () => {
   if (error) {
     return <div className="flex justify-center items-center h-screen bg-[#222222] text-red-500">{error}</div>;
   }
-  
-  if (isQuizMode) {
-    return <QuizFlow categories={categories} sortedTermsByCategory={sortedTermsByCategory} onExit={() => setIsQuizMode(false)} />;
-  }
 
   return (
     <div className="bg-[#222222] dark:bg-[#222222] text-[#AAAAAA] dark:text-[#AAAAAA] min-h-screen flex flex-col md:flex-row transition-colors">
@@ -312,13 +308,6 @@ const App: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-2 md:gap-4 ml-auto">
-                    <button
-                        onClick={() => setIsQuizMode(true)}
-                        className="p-2 rounded-full bg-[#525252] hover:bg-[#656565] text-[#AAAAAA] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
-                        aria-label="Start Quiz"
-                    >
-                        <QuestionMarkCircleIcon className="w-5 h-5" />
-                    </button>
                     <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 </div>
             </header>
@@ -343,6 +332,31 @@ const App: React.FC = () => {
             <Modal onClose={() => setSelectedTermForModal(null)}>
                 <div className="p-1">
                     <TermCard term={selectedTermForModal} allTerms={currentTerms} />
+                </div>
+            </Modal>
+        )}
+        
+        {/* Floating Quiz Button */}
+        <button
+            onClick={() => setIsQuizMode(true)}
+            className="fixed bottom-6 right-6 p-4 rounded-full bg-sky-600 hover:bg-sky-500 text-white transition-all duration-300 hover:shadow-[0_0_20px_rgba(14,165,233,0.6)] hover:scale-110 z-50 group"
+            aria-label="Mulai Quiz"
+            title="Mulai Quiz - Uji pengetahuan Anda tentang istilah teknis"
+        >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                Mulai Quiz
+                <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800"></div>
+            </div>
+        </button>
+        
+        {/* Quiz Modal */}
+        {isQuizMode && (
+            <Modal onClose={() => setIsQuizMode(false)}>
+                <div className="p-6 pt-12">
+                    <QuizFlow categories={categories} sortedTermsByCategory={sortedTermsByCategory} onExit={() => setIsQuizMode(false)} selectedCategoryId={selectedCategoryId} />
                 </div>
             </Modal>
         )}

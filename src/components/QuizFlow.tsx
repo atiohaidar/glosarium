@@ -76,10 +76,11 @@ interface QuizSetupProps {
   sortedTermsByCategory: Map<string, Term[]>;
   onSubmit: (config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random' }) => void;
   onExit: () => void;
+  selectedCategoryId?: string | null;
 }
 
-const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory, onSubmit, onExit }) => {
-    const [categoryId, setCategoryId] = useState(categories[0]?.id || '');
+const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory, onSubmit, onExit, selectedCategoryId }) => {
+    const [categoryId, setCategoryId] = useState(selectedCategoryId || categories[0]?.id || '');
     const [numQuestions, setNumQuestions] = useState(5);
     const [questionKey, setQuestionKey] = useState<keyof Definitions | 'random'>('istilah');
 
@@ -123,7 +124,7 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
     };
 
     return (
-        <div className="w-full max-w-lg mx-auto p-8 bg-[#494949] rounded-xl border border-[#656565]/50 shadow-2xl">
+        <div className="w-full max-w-lg mx-auto">
             <div className="flex items-center gap-3 mb-6">
                 <QuestionMarkCircleIcon className="w-8 h-8 text-sky-400" />
                 <h1 className="text-2xl font-bold text-white">Pengaturan Kuis</h1>
@@ -219,7 +220,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
     };
 
     return (
-        <div className="w-full max-w-2xl mx-auto p-8 bg-[#494949] rounded-xl border border-[#656565]/50 shadow-2xl">
+        <div className="w-full max-w-2xl mx-auto">
             <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
                     <p className="text-sm text-[#AAAAAA]">Soal {questionNumber} dari {totalQuestions}</p>
@@ -229,7 +230,7 @@ const QuizActive: React.FC<QuizActiveProps> = ({ question, questionNumber, total
                     </div>
                 </div>
                 <div className="w-full bg-[#2d2d2d] rounded-full h-2.5">
-                    <div className="bg-sky-500 h-2.5 rounded-full transition-all duration-300" style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}></div>
+                    <div className="bg-sky-500 h-2.5 rounded-full transition-all duration-300" style={{ width: `${((questionNumber-1) / totalQuestions) * 100}%` }}></div>
                 </div>
             </div>
             <div className="text-lg text-white mb-8 min-h-[6rem] flex items-center justify-center text-center">
@@ -264,7 +265,7 @@ const QuizResults: React.FC<QuizResultsProps> = ({ results, durationMs, onRestar
     const incorrectAnswers = results.filter(r => !r.isCorrect);
 
     return (
-        <div className="w-full max-w-3xl mx-auto p-8 bg-[#494949] rounded-xl border border-[#656565]/50 shadow-2xl">
+        <div className="w-full max-w-3xl mx-auto">
             <h1 className="text-3xl font-bold text-white text-center mb-2">Kuis Selesai!</h1>
             <p className="text-center text-[#AAAAAA] mb-8">Berikut adalah hasil Anda:</p>
             
@@ -326,9 +327,10 @@ interface QuizFlowProps {
     categories: Category[];
     sortedTermsByCategory: Map<string, Term[]>;
     onExit: () => void;
+    selectedCategoryId?: string | null;
 }
 
-export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCategory, onExit }) => {
+export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCategory, onExit, selectedCategoryId }) => {
     const [step, setStep] = useState<'setup' | 'active' | 'results'>('setup');
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
@@ -429,11 +431,11 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
     const renderStep = () => {
         switch (step) {
             case 'setup':
-                return <QuizSetup categories={categories} sortedTermsByCategory={sortedTermsByCategory} onSubmit={handleSetupSubmit} onExit={onExit} />;
+                return <QuizSetup categories={categories} sortedTermsByCategory={sortedTermsByCategory} onSubmit={handleSetupSubmit} onExit={onExit} selectedCategoryId={selectedCategoryId} />;
             case 'active':
                 if (questions.length === 0 || !questions[currentQuestionIndex]) {
                     return (
-                        <div className="text-center text-white bg-[#494949] p-8 rounded-lg">
+                        <div className="text-center text-white">
                             <p className="mb-4">Tidak ada soal yang bisa dibuat dari pengaturan ini.</p>
                             <button onClick={handleRestart} className="py-2 px-4 rounded-lg bg-sky-600 hover:bg-sky-500 transition-colors">Kembali</button>
                         </div>
@@ -456,9 +458,5 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
         }
     };
 
-    return (
-        <div className="min-h-screen bg-[#222222] flex items-center justify-center p-4">
-            {renderStep()}
-        </div>
-    );
+    return renderStep();
 };

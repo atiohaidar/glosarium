@@ -1,53 +1,7 @@
 
 {
     "categories": [
-        {
-            "id": "backend",
-            "name": "Backend",
-            "terms": [
-                {
-                    "id": "fullstack",
-                    "title": "Fullstack",
-                    "definitions": {
-                        "bahasa": "Full = penuh, Stack = tumpukan → menguasai semua lapisan.",
-                        "istilah": "Orang yang bisa mengerjakan frontend dan backend sekaligus."
-                    }
-                },
-                {
-                    "id": "backend",
-                    "title": "Backend",
-                    "definitions": {
-                        "bahasa": "Back = belakang, End = ujung → bagian belakang dari sistem.",
-                        "istilah": "Bagian dari aplikasi yang bekerja di server, mengatur data, logika, dan komunikasi.",
-                        "kenapaAda": "Supaya aplikasi bisa menyimpan data dan melakukan perhitungan yang tidak mungkin dilakukan di browser.",
-                        "contoh": "Login, database, API."
-                    }
-                },
-                {
-                    "id": "frontend",
-                    "title": "Frontend",
-                    "definitions": {
-                        "bahasa": "Front = depan, End = ujung → bagian depan dari sistem.",
-                        "istilah": "Bagian aplikasi yang dilihat user langsung di layar."
-                    }
-                }
-            ]
-        },
-        {
-            "id": "ml",
-            "name": "Machine Learning",
-            "terms": [
-                {
-                    "id": "ai",
-                    "title": "Artificial Intelligence",
-                    "definitions": {
-                        "bahasa": "Artificial = buatan, Intelligence = kecerdasan → kecerdasan buatan.",
-                        "istilah": "Kemampuan komputer untuk meniru kecerdasan manusia."
-                    }
-                }
-            ]
-        },
-        {
+           {
             "id": "web3",
             "name": "Web3",
             "terms": [
@@ -383,6 +337,53 @@
                     }
                 }
             ]
+        },
+        {
+            "id": "backend",
+            "name": "Backend",
+            "terms": [
+                {
+                    "id": "fullstack",
+                    "title": "Fullstack",
+                    "definitions": {
+                        "bahasa": "Full = penuh, Stack = tumpukan → menguasai semua lapisan.",
+                        "istilah": "Orang yang bisa mengerjakan frontend dan backend sekaligus."
+                    }
+                },
+                {
+                    "id": "backend",
+                    "title": "Backend",
+                    "definitions": {
+                        "bahasa": "Back = belakang, End = ujung → bagian belakang dari sistem.",
+                        "istilah": "Bagian dari aplikasi yang bekerja di server, mengatur data, logika, dan komunikasi.",
+                        "kenapaAda": "Supaya aplikasi bisa menyimpan data dan melakukan perhitungan yang tidak mungkin dilakukan di browser.",
+                        "contoh": "Login, database, API."
+                    }
+                },
+                {
+                    "id": "frontend",
+                    "title": "Frontend",
+                    "definitions": {
+                        "bahasa": "Front = depan, End = ujung → bagian depan dari sistem.",
+                        "istilah": "Bagian aplikasi yang dilihat user langsung di layar."
+                    }
+                }
+            ]
+        },
+        {
+            "id": "ml",
+            "name": "Machine Learning",
+            "terms": [
+                {
+                    "id": "ai",
+                    "title": "Artificial Intelligence",
+                    "definitions": {
+                        "bahasa": "Artificial = buatan, Intelligence = kecerdasan → kecerdasan buatan.",
+                        "istilah": "Kemampuan komputer untuk meniru kecerdasan manusia."
+                    }
+                }
+            ]
         }
+     
     ]
 }
