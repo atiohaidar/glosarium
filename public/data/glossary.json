@@ -1,7 +1,6 @@
-
 {
     "categories": [
-           {
+        {
             "id": "web3",
             "name": "Web3",
             "terms": [
@@ -9,331 +8,651 @@
                     "id": "blockchain",
                     "title": "Blockchain",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Sistem database terdistribusi yang menyimpan data dalam \"blok\" yang saling terhubung dan tidak bisa diubah.",
-                        "contoh": "Bitcoin adalah blockchain pertama."
+                        "bahasa": "Block = Blok, Chain = Rantai → Rantai yang terdiri dari blok-blok data.",
+                        "istilah": "Buku besar digital yang dibagikan ke banyak komputer. Setiap transaksi dicatat dalam 'blok', dan setiap blok terhubung satu sama lain membentuk 'rantai' yang tidak bisa diubah.",
+                        "contoh": "Bitcoin menggunakan blockchain untuk mencatat semua transaksinya secara transparan.",
+                        "kenapaAda": "Untuk menciptakan sistem pencatatan yang jujur dan aman tanpa perlu pihak ketiga (seperti bank) untuk memvalidasi transaksi.",
+                        "referensi": [
+                            "https://aws.amazon.com/id/what-is/blockchain/",
+                            "https://www.ibm.com/topics/blockchain",
+                            "https://www.investopedia.com/terms/b/blockchain.asp"
+                        ]
                     }
                 },
                 {
                     "id": "web3",
                     "title": "Web3",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Generasi internet berikutnya yang fokus pada desentralisasi, bukan server pusat.",
-                        "contoh": "App seperti Fradium yang jalan di blockchain tanpa kontrol perusahaan besar."
+                        "bahasa": "Web = Jaring (merujuk pada World Wide Web), 3 = Tiga → Generasi ketiga dari internet.",
+                        "istilah": "Fase internet berikutnya yang dibangun di atas teknologi blockchain. Tujuannya adalah internet yang tidak dikuasai oleh perusahaan besar, melainkan dimiliki oleh penggunanya.",
+                        "contoh": "Aplikasi media sosial di Web3 memungkinkan kamu mengontrol datamu sendiri, bukan perusahaan.",
+                        "kenapaAda": "Untuk mengembalikan kontrol data kepada pengguna dan menciptakan internet yang lebih terbuka, adil, dan tidak dimonopoli oleh perusahaan teknologi besar.",
+                        "referensi": [
+                            "https://ethereum.org/en/web3/",
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-web3"
+                        ]
                     }
                 },
                 {
                     "id": "smart_contract",
                     "title": "Smart Contract",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Kode program yang berjalan otomatis di blockchain saat kondisi terpenuhi."
+                        "bahasa": "Smart = Pintar, Contract = Kontrak → Kontrak yang bisa mengeksekusi dirinya sendiri secara pintar.",
+                        "istilah": "Program komputer yang berjalan di blockchain. Program ini otomatis menjalankan perjanjian jika syarat-syarat tertentu sudah terpenuhi.",
+                        "contoh": "Mesin penjual otomatis adalah contoh sederhana: jika kamu masukkan uang (syarat terpenuhi), mesin otomatis mengeluarkan minuman (perjanjian dijalankan).",
+                        "kenapaAda": "Untuk menjalankan perjanjian secara otomatis tanpa perantara, membuat proses lebih cepat, transparan, dan tidak bisa dicurangi.",
+                        "referensi": [
+                            "https://crypto.com/university/what-are-smart-contracts",
+                            "https://www.ibm.com/topics/smart-contracts",
+                            "https://en.wikipedia.org/wiki/Smart_contract"
+                        ]
                     }
                 },
                 {
                     "id": "dapp",
                     "title": "dApp (Decentralized Application)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "App yang jalan di blockchain, bukan server pusat.",
-                        "contoh": "Fradium sendiri adalah dApp untuk analisis crypto."
+                        "bahasa": "Decentralized = Terdesentralisasi, Application = Aplikasi → Aplikasi yang tidak punya pusat kontrol.",
+                        "istilah": "Aplikasi yang berjalan di jaringan blockchain, bukan di server milik satu perusahaan. Tidak ada satu pihak pun yang bisa mematikannya.",
+                        "contoh": "Fradium adalah dApp untuk analisis crypto yang berjalan di atas blockchain.",
+                        "kenapaAda": "Agar aplikasi tidak dikontrol satu entitas, membuatnya lebih tahan sensor, transparan, dan memberikan pengguna kontrol penuh atas datanya.",
+                        "referensi": [
+                            "https://ethereum.org/en/dapps/",
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-dapp"
+                        ]
                     }
                 },
                 {
                     "id": "token",
                     "title": "Token",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Unit nilai di blockchain (fungible atau non-fungible).",
-                        "contoh": "Bitcoin adalah token, bisa dipertukarkan."
+                        "bahasa": "Token = Tanda atau Simbol → Sesuatu yang merepresentasikan nilai atau hak.",
+                        "istilah": "Aset digital yang ada di dalam sebuah blockchain. Bisa mewakili uang, kepemilikan, hak suara, atau hal lainnya.",
+                        "contoh": "Di sebuah game, token bisa digunakan sebagai mata uang untuk membeli item.",
+                        "kenapaAda": "Untuk merepresentasikan nilai atau fungsi secara digital di dalam ekosistem blockchain.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/c/crypto-token.asp",
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-token"
+                        ]
                     }
                 },
                 {
                     "id": "nft",
                     "title": "NFT (Non-Fungible Token)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Aset digital unik (seperti gambar atau musik) di blockchain.",
-                        "contoh": "Gambar digital yang tidak bisa digandakan."
+                        "bahasa": "Non-Fungible = Tidak dapat ditukar (unik), Token = Tanda → Tanda unik yang tidak bisa diganti dengan yang lain.",
+                        "istilah": "Token yang bersifat unik dan tidak bisa diganti dengan token lain. Digunakan sebagai bukti kepemilikan digital untuk barang seperti karya seni, musik, atau item game.",
+                        "contoh": "Lukisan Monalisa itu 'non-fungible' karena hanya ada satu yang asli. NFT adalah sertifikat digital untuk hal semacam itu.",
+                        "kenapaAda": "Untuk membuktikan kepemilikan aset digital yang unik dan langka, menciptakan nilai baru bagi para kreator.",
+                        "referensi": [
+                            "https://www.forbes.com/advisor/investing/cryptocurrency/nft-non-fungible-token/",
+                            "https://ethereum.org/en/nft/"
+                        ]
+                    }
+                },
+                {
+                    "id": "fungible",
+                    "title": "Fungible",
+                    "definitions": {
+                        "bahasa": "Berasal dari bahasa Latin 'fungibilis' → dapat dipertukarkan.",
+                        "istilah": "Sifat suatu barang yang bisa ditukar dengan barang lain yang sejenis dan nilainya sama persis.",
+                        "contoh": "Uang Rp10.000 milikmu bisa ditukar dengan uang Rp10.000 milik temanmu, nilainya tetap sama. Maka uang itu fungible.",
+                        "kenapaAda": "Konsep ini penting untuk membedakan aset yang seragam (seperti mata uang) dengan aset yang unik (seperti karya seni atau NFT).",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/f/fungibility.asp"
+                        ]
                     }
                 },
                 {
                     "id": "wallet",
                     "title": "Wallet (Crypto Wallet)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Dompet digital untuk simpan dan kirim crypto.",
-                        "contoh": "MetaMask untuk Ethereum."
+                        "bahasa": "Wallet = Dompet → Tempat untuk menyimpan aset kripto.",
+                        "istilah": "Aplikasi atau perangkat untuk menyimpan, mengirim, dan menerima aset kripto. Ini adalah gerbangmu untuk berinteraksi dengan dunia Web3.",
+                        "contoh": "MetaMask (dompet aplikasi) atau Ledger (dompet perangkat keras).",
+                        "kenapaAda": "Sebagai alat bagi pengguna untuk mengelola aset kripto mereka dengan aman dan mengakses dApps.",
+                        "referensi": [
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-crypto-wallet",
+                            "https://www.investopedia.com/terms/c/crypto-wallet.asp"
+                        ]
                     }
                 },
                 {
                     "id": "address",
                     "title": "Address (Wallet Address)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Alamat unik untuk kirim/terima crypto, seperti rekening bank.",
-                        "contoh": "0x123...abc di Ethereum."
+                        "bahasa": "Address = Alamat → Alamat unik untuk tujuan pengiriman dan penerimaan.",
+                        "istilah": "Serangkaian huruf dan angka unik yang berfungsi seperti nomor rekening. Kamu memberikannya kepada orang lain untuk menerima aset kripto.",
+                        "contoh": "Alamat Ethereum biasanya dimulai dengan '0x' diikuti kombinasi acak, seperti 0x123...abc.",
+                        "kenapaAda": "Sebagai tujuan publik yang jelas untuk mengirim dan menerima aset di blockchain.",
+                        "referensi": [
+                            "https://www.gemini.com/cryptopedia/crypto-wallet-address-public-key",
+                            "https://academy.binance.com/en/glossary/address"
+                        ]
                     }
                 },
                 {
                     "id": "defi",
                     "title": "DeFi (Decentralized Finance)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Sistem keuangan tanpa bank, pakai blockchain.",
-                        "contoh": "Pinjam uang tanpa bank via smart contract."
+                        "bahasa": "Decentralized = Terdesentralisasi, Finance = Keuangan → Keuangan yang terdesentralisasi.",
+                        "istilah": "Layanan keuangan (seperti pinjaman atau tabungan) yang dibangun di atas blockchain. Semuanya berjalan otomatis tanpa perlu bank atau lembaga perantara.",
+                        "contoh": "Meminjam uang langsung dari sebuah protokol dengan jaminan aset kripto, tanpa melalui proses di bank.",
+                        "kenapaAda": "Untuk menciptakan sistem keuangan yang terbuka, transparan, dan dapat diakses siapa saja, tanpa batasan geografis atau perantara yang mahal.",
+                        "referensi": [
+                            "https://www.investopedia.com/decentralized-finance-defi-5113835",
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-defi"
+                        ]
                     }
                 },
                 {
                     "id": "dex",
                     "title": "DEX (Decentralized Exchange)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Exchange crypto tanpa pusat, pakai smart contract.",
-                        "contoh": "Uniswap, di mana user swap token langsung tanpa perantara."
+                        "bahasa": "Decentralized = Terdesentralisasi, Exchange = Bursa/Pertukaran → Tempat pertukaran yang terdesentralisasi.",
+                        "istilah": "Platform untuk menukar aset kripto secara langsung antar pengguna (peer-to-peer), tanpa ada pihak ketiga yang memegang asetmu.",
+                        "contoh": "Di Uniswap, kamu bisa menukar token ETH dengan token lain langsung dari dompetmu.",
+                        "kenapaAda": "Agar pengguna bisa bertransaksi dengan aman tanpa menyerahkan aset mereka ke pihak ketiga, mengurangi risiko peretasan di bursa terpusat.",
+                        "referensi": [
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-dex",
+                            "https://academy.binance.com/en/articles/what-is-a-decentralized-exchange-dex"
+                        ]
+                    }
+                },
+                {
+                    "id": "peer_to_peer",
+                    "title": "Peer-to-Peer (P2P)",
+                    "definitions": {
+                        "bahasa": "Peer = Rekan/Sejawat → Dari satu pihak langsung ke pihak lain.",
+                        "istilah": "Interaksi atau pertukaran yang terjadi secara langsung antara dua pihak tanpa melalui perantara atau server pusat.",
+                        "contoh": "Mengirim file langsung dari komputermu ke komputer temanmu menggunakan BitTorrent, tanpa mengunggahnya ke server dulu.",
+                        "kenapaAda": "Untuk menciptakan sistem yang lebih efisien, tahan sensor, dan tidak bergantung pada satu titik kegagalan (server pusat).",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/p/peertopeer-p2p-service.asp"
+                        ]
                     }
                 },
                 {
                     "id": "dao",
                     "title": "DAO (Decentralized Autonomous Organization)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Organisasi tanpa pemimpin, dijalankan oleh voting komunitas.",
-                        "contoh": "Komunitas yang vote keputusan via token."
+                        "bahasa": "Decentralized = Terdesentralisasi, Autonomous = Otonom/Mandiri, Organization = Organisasi → Organisasi mandiri yang terdesentralisasi.",
+                        "istilah": "Sebuah organisasi yang dijalankan oleh kode program dan keputusan diambil melalui voting oleh para anggotanya, bukan oleh satu pemimpin.",
+                        "contoh": "Sebuah grup investasi di mana semua anggota memberikan suara (vote) untuk memutuskan aset apa yang akan dibeli.",
+                        "kenapaAda": "Untuk menciptakan organisasi yang lebih demokratis dan transparan, di mana aturan mainnya jelas dan tidak bisa diubah sepihak.",
+                        "referensi": [
+                            "https://ethereum.org/en/dao/",
+                            "https://www.investopedia.com/tech/what-dao/"
+                        ]
                     }
                 },
                 {
                     "id": "on_chain",
                     "title": "On-Chain",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Data atau proses yang terjadi langsung di blockchain (transparan dan immutable).",
-                        "contoh": "Transaksi yang tercatat di blockchain."
+                        "bahasa": "On = Di atas, Chain = Rantai → Aktivitas yang terjadi di atas rantai (blockchain).",
+                        "istilah": "Segala aktivitas atau transaksi yang dicatat dan divalidasi secara langsung di blockchain.",
+                        "contoh": "Mengirim Bitcoin dari satu alamat ke alamat lain adalah transaksi on-chain.",
+                        "kenapaAda": "Untuk memastikan semua aktivitas tercatat permanen, transparan, dan sangat aman karena dijamin oleh seluruh jaringan.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/o/on-chain.asp",
+                            "https://chain.link/education/on-chain-vs-off-chain"
+                        ]
                     }
                 },
                 {
                     "id": "off_chain",
                     "title": "Off-Chain",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Proses di luar blockchain (lebih cepat tapi kurang aman).",
-                        "contoh": "Hitung skor AI di server biasa."
+                        "bahasa": "Off = Di luar, Chain = Rantai → Aktivitas yang terjadi di luar rantai (blockchain).",
+                        "istilah": "Aktivitas atau transaksi yang terjadi di luar jaringan utama blockchain. Biasanya dilakukan untuk menghemat biaya dan waktu.",
+                        "contoh": "Bermain game di mana hanya item finalnya yang dicatat di blockchain, sementara setiap gerakan dalam game diproses off-chain.",
+                        "kenapaAda": "Untuk mengatasi masalah kecepatan dan biaya yang mahal di blockchain utama, sehingga transaksi bisa lebih cepat dan murah.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/o/off-chain.asp",
+                            "https://chain.link/education/on-chain-vs-off-chain"
+                        ]
                     }
                 },
                 {
                     "id": "immutable",
                     "title": "Immutable",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Data yang tidak bisa diubah setelah dibuat.",
-                        "contoh": "Riwayat transaksi di blockchain tidak bisa dihapus."
+                        "bahasa": "Berasal dari bahasa Latin 'immutabilis' → Im = tidak, mutabilis = dapat berubah. Artinya tidak dapat diubah.",
+                        "istilah": "Sifat data yang sekali ditulis tidak bisa diubah atau dihapus lagi.",
+                        "contoh": "Riwayat transaksi di blockchain bersifat immutable, mirip seperti ukiran di atas batu.",
+                        "kenapaAda": "Ini adalah fitur keamanan utama blockchain. Sifat ini memastikan bahwa tidak ada yang bisa memanipulasi catatan transaksi di masa lalu.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/i/immutability.asp",
+                            "https://aws.amazon.com/what-is/blockchain/"
+                        ]
                     }
                 },
                 {
                     "id": "gas_fee",
                     "title": "Gas Fee",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Biaya untuk transaksi di blockchain.",
-                        "contoh": "Bayar fee untuk kirim ETH."
+                        "bahasa": "Gas = Bensin/Bahan Bakar, Fee = Biaya → Biaya 'bahan bakar' untuk menjalankan transaksi.",
+                        "istilah": "Biaya yang harus kamu bayar untuk melakukan transaksi atau menjalankan smart contract di blockchain seperti Ethereum.",
+                        "contoh": "Saat mengirim ETH, kamu harus membayar sedikit 'gas fee' sebagai upah untuk para validator yang memproses transaksimu.",
+                        "kenapaAda": "Sebagai upah bagi para validator yang menjaga keamanan jaringan dan untuk mencegah orang mengirim transaksi spam yang bisa membebani jaringan.",
+                        "referensi": [
+                            "https://ethereum.org/en/developers/docs/gas/",
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-gas"
+                        ]
                     }
                 },
                 {
                     "id": "consensus_mechanism",
                     "title": "Consensus Mechanism",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Cara blockchain setuju transaksi (misal Proof of Work atau Proof of Stake).",
-                        "contoh": "Ethereum pakai PoS, di mana validator \"taruh\" token untuk validasi."
+                        "bahasa": "Consensus = Kesepakatan, Mechanism = Mekanisme → Mekanisme untuk mencapai kesepakatan.",
+                        "istilah": "Aturan main yang digunakan oleh para peserta jaringan blockchain untuk menyetujui transaksi mana yang sah dan bisa ditambahkan ke dalam rantai.",
+                        "contoh": "Proof of Work (yang dipakai Bitcoin) dan Proof of Stake (yang dipakai Ethereum) adalah dua contoh populer.",
+                        "kenapaAda": "Agar jaringan terdesentralisasi bisa mencapai kesepakatan tanpa perlu adanya pemimpin atau otoritas pusat.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/c/consensus-mechanism-cryptocurrency.asp",
+                            "https://academy.binance.com/en/articles/what-is-blockchain-consensus-algorithm-fb"
+                        ]
+                    }
+                },
+                {
+                    "id": "proof_of_work",
+                    "title": "Proof of Work (PoW)",
+                    "definitions": {
+                        "bahasa": "Proof = Bukti, Work = Kerja → Bukti bahwa sebuah pekerjaan (komputasi) telah dilakukan.",
+                        "istilah": "Mekanisme konsensus di mana para peserta (disebut penambang) berlomba memecahkan teka-teki matematika yang rumit. Siapa yang menang, berhak menambahkan blok baru dan mendapat imbalan.",
+                        "contoh": "Bitcoin menggunakan PoW. Para penambang menggunakan komputer super kuat untuk mengamankan jaringan.",
+                        "kenapaAda": "Ini adalah mekanisme pertama yang berhasil mengamankan blockchain, membuatnya sangat sulit untuk diserang karena membutuhkan daya komputasi yang sangat besar.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/p/proof-work.asp"
+                        ]
+                    }
+                },
+                {
+                    "id": "proof_of_stake",
+                    "title": "Proof of Stake (PoS)",
+                    "definitions": {
+                        "bahasa": "Proof = Bukti, Stake = Taruhan/Jaminan → Bukti kepemilikan atau jaminan.",
+                        "istilah": "Mekanisme konsensus di mana para peserta (disebut validator) 'mengunci' atau 'mempertaruhkan' sejumlah koin mereka untuk mendapat kesempatan memvalidasi transaksi dan membuat blok baru.",
+                        "contoh": "Ethereum menggunakan PoS. Semakin banyak koin yang kamu 'stake', semakin besar peluangmu terpilih untuk memvalidasi blok.",
+                        "kenapaAda": "Diciptakan sebagai alternatif yang lebih hemat energi dibandingkan Proof of Work.",
+                        "referensi": [
+                            "https://www.investopedia.com/terms/p/proof-stake-pos.asp"
+                        ]
+                    }
+                },
+                {
+                    "id": "validator",
+                    "title": "Validator",
+                    "definitions": {
+                        "bahasa": "Validator = Orang atau sesuatu yang memvalidasi/memverifikasi.",
+                        "istilah": "Peserta dalam jaringan blockchain (terutama Proof-of-Stake) yang bertanggung jawab untuk memverifikasi transaksi dan membuat blok baru.",
+                        "contoh": "Di jaringan Ethereum, para validator menjalankan software khusus untuk membantu mengamankan jaringan dan sebagai imbalannya mereka mendapatkan reward.",
+                        "kenapaAda": "Untuk menjaga keamanan dan integritas blockchain dengan memastikan semua transaksi yang ditambahkan adalah sah.",
+                        "referensi": [
+                            "https://ethereum.org/en/staking/"
+                        ]
+                    }
+                },
+                {
+                    "id": "hash",
+                    "title": "Hash",
+                    "definitions": {
+                        "bahasa": "Hash = Cincang → Proses 'mencincang' data menjadi serangkaian karakter acak.",
+                        "istilah": "Sidik jari digital yang unik untuk setiap data. Jika kamu mengubah sedikit saja datanya, hash-nya akan berubah total.",
+                        "contoh": "Setiap blok di blockchain memiliki hash unik. Hash dari blok sebelumnya juga dimasukkan ke blok berikutnya, inilah yang mengikat mereka menjadi 'rantai'.",
+                        "kenapaAda": "Untuk memverifikasi integritas data secara efisien. Dengan membandingkan hash, kita bisa tahu apakah data telah diubah tanpa harus melihat seluruh datanya.",
+                        "referensi": [
+                            "https://www.kaspersky.com/resource-center/definitions/what-is-a-hash"
+                        ]
                     }
                 },
                 {
                     "id": "merkle_tree",
                     "title": "Merkle Tree",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Struktur data pohon untuk verifikasi data cepat di blockchain.",
-                        "contoh": "Bitcoin pakai ini untuk bukti transaksi tanpa download seluruh blockchain."
+                        "bahasa": "Merkle = Nama penemu (Ralph Merkle), Tree = Pohon → Struktur data yang menyerupai pohon, dinamai sesuai penemunya.",
+                        "istilah": "Sebuah cara untuk menyusun hash dari banyak transaksi menjadi satu hash tunggal (disebut Merkle Root). Ini seperti membuat ringkasan dari semua transaksi dalam satu blok.",
+                        "contoh": "Bitcoin menggunakan ini agar bisa cepat mengecek apakah sebuah transaksi ada di dalam blok tanpa perlu mengunduh seluruh data blok tersebut.",
+                        "kenapaAda": "Untuk membuat proses verifikasi data di dalam blok menjadi sangat cepat dan efisien.",
+                        "referensi": [
+                            "https://www.geeksforgeeks.org/introduction-to-merkle-tree/",
+                            "https://en.wikipedia.org/wiki/Merkle_tree",
+                            "https://academy.binance.com/en/articles/merkle-trees-explained"
+                        ]
                     }
                 },
                 {
                     "id": "layer_2",
                     "title": "Layer 2",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Solusi untuk bikin blockchain lebih cepat (skalabilitas).",
-                        "contoh": "Lightning Network untuk Bitcoin, bikin transaksi mikro cepat."
+                        "bahasa": "Layer = Lapisan, 2 = Dua → Lapisan kedua yang dibangun di atas lapisan utama.",
+                        "istilah": "Teknologi yang dibangun di atas blockchain utama (Layer 1) untuk membuat transaksi lebih cepat dan murah. Ini seperti membangun jalan tol di atas jalan raya yang macet.",
+                        "contoh": "Lightning Network untuk Bitcoin atau Polygon untuk Ethereum adalah solusi Layer 2.",
+                        "kenapaAda": "Untuk mengatasi masalah skalabilitas (kemacetan) di blockchain utama, sehingga bisa memproses lebih banyak transaksi dengan biaya lebih rendah.",
+                        "referensi": [
+                            "https://ethereum.org/en/layer-2/",
+                            "https://www.investopedia.com/layer-2-5649287"
+                        ]
                     }
                 },
                 {
                     "id": "bridge",
                     "title": "Bridge",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Alat untuk transfer asset antar blockchain.",
-                        "contoh": "Transfer ETH ke BSC via bridge."
+                        "bahasa": "Bridge = Jembatan → Sesuatu yang menghubungkan dua sisi (dalam hal ini, dua blockchain).",
+                        "istilah": "Sebuah aplikasi yang memungkinkan kamu untuk mentransfer aset kripto dari satu jaringan blockchain ke jaringan blockchain lainnya.",
+                        "contoh": "Mengirim token ETH dari jaringan Ethereum ke jaringan Binance Smart Chain (BSC) menggunakan sebuah bridge.",
+                        "kenapaAda": "Untuk menghubungkan berbagai ekosistem blockchain yang terisolasi, sehingga aset bisa bergerak bebas di antaranya.",
+                        "referensi": [
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-blockchain-bridge",
+                            "https://chain.link/education/blockchain-bridge"
+                        ]
                     }
                 },
                 {
                     "id": "multi_chain",
                     "title": "Multi-Chain",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Mendukung banyak blockchain sekaligus.",
-                        "contoh": "Wallet yang handle Bitcoin dan ETH."
+                        "bahasa": "Multi = Banyak, Chain = Rantai → Mendukung banyak rantai (blockchain).",
+                        "istilah": "Istilah untuk menggambarkan sebuah dApp atau protokol yang bisa beroperasi di lebih dari satu jaringan blockchain.",
+                        "contoh": "Sebuah dompet kripto yang bisa digunakan untuk menyimpan Bitcoin, Ethereum, dan Solana sekaligus.",
+                        "kenapaAda": "Agar aplikasi bisa menjangkau lebih banyak pengguna dari berbagai ekosistem blockchain dan tidak terbatas pada satu jaringan saja.",
+                        "referensi": [
+                            "https://101blockchains.com/multichain-vs-cross-chain/",
+                            "https://coinmarketcap.com/alexandria/glossary/multichain"
+                        ]
                     }
                 },
                 {
                     "id": "oracle",
                     "title": "Oracle",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Layanan yang bawa data dunia nyata ke blockchain.",
-                        "contoh": "Harga saham dari API ke smart contract."
+                        "bahasa": "Oracle = Peramal/Sumber kebenaran → Merujuk pada sumber data eksternal yang dipercaya.",
+                        "istilah": "Layanan pihak ketiga yang menyediakan data dari dunia nyata (seperti harga saham, cuaca, atau hasil pertandingan) untuk digunakan oleh smart contract di blockchain.",
+                        "contoh": "Sebuah smart contract asuransi penerbangan menggunakan oracle untuk mendapatkan data apakah penerbanganmu ditunda atau tidak.",
+                        "kenapaAda": "Karena blockchain tidak bisa mengakses data dari luar jaringannya sendiri. Oracle bertindak sebagai jembatan informasi antara dunia nyata dan blockchain.",
+                        "referensi": [
+                            "https://chain.link/education/blockchain-oracles",
+                            "https://ethereum.org/en/developers/docs/oracles/"
+                        ]
                     }
                 },
                 {
                     "id": "staking",
                     "title": "Staking",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Mengunci token untuk dapat reward.",
-                        "contoh": "Taruh token di validator untuk dapat interest."
+                        "bahasa": "Stake = Mempertaruhkan/Menyetorkan → Aksi mempertaruhkan atau mengunci aset.",
+                        "istilah": "Proses mengunci sejumlah aset kripto di dalam dompetmu untuk berpartisipasi dalam mengamankan jaringan (di sistem PoS). Sebagai imbalannya, kamu akan mendapatkan reward.",
+                        "contoh": "Menyimpan (staking) Ethereum untuk membantu mengamankan jaringan dan mendapatkan bunga dari simpanan tersebut.",
+                        "kenapaAda": "Sebagai cara untuk mengamankan jaringan blockchain Proof-of-Stake dan memberikan insentif bagi para pemegang token untuk berpartisipasi.",
+                        "referensi": [
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-staking",
+                            "https://www.forbes.com/advisor/investing/cryptocurrency/what-is-staking-in-crypto/"
+                        ]
                     }
                 },
                 {
                     "id": "yield_farming",
                     "title": "Yield Farming",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Cara dapat reward dengan staking token di DeFi.",
-                        "contoh": "Deposit token di pool farming untuk dapat token baru sebagai reward."
+                        "bahasa": "Yield = Hasil/Imbalan, Farming = Bertani → Aktivitas 'bertani' untuk mendapatkan imbalan.",
+                        "istilah": "Strategi di dunia DeFi di mana kamu memindahkan aset kriptomu ke berbagai protokol pinjaman atau likuiditas untuk mendapatkan imbalan (reward) semaksimal mungkin.",
+                        "contoh": "Menyimpan token di sebuah DEX untuk menyediakan likuiditas, dan sebagai imbalannya kamu mendapatkan token baru sebagai 'panen'.",
+                        "kenapaAda": "Untuk memberikan insentif kepada pengguna agar mau menyediakan likuiditas (dana) yang dibutuhkan oleh protokol-protokol DeFi.",
+                        "referensi": [
+                            "https://www.investopedia.com/yield-farming-5114552",
+                            "https://academy.binance.com/en/articles/what-is-yield-farming-in-decentralized-finance-defi"
+                        ]
                     }
                 },
                 {
                     "id": "flash_loan",
                     "title": "Flash Loan",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Pinjaman instan tanpa collateral, harus balik dalam satu transaksi.",
-                        "contoh": "Pinjam 100 ETH dari Aave tanpa jaminan, tapi harus balik plus fee dalam blok yang sama."
+                        "bahasa": "Flash = Kilat/Seketika, Loan = Pinjaman → Pinjaman yang terjadi dalam sekejap.",
+                        "istilah": "Pinjaman super cepat tanpa jaminan apa pun, dengan syarat pinjaman tersebut harus dikembalikan dalam satu transaksi blockchain yang sama (biasanya dalam beberapa detik).",
+                        "contoh": "Meminjam 100 ETH, menggunakannya untuk membeli token murah di satu DEX dan menjualnya mahal di DEX lain, lalu mengembalikan 100 ETH plus biaya, semua dalam satu transaksi.",
+                        "kenapaAda": "Untuk memungkinkan strategi trading arbitrase dan keuangan lainnya yang membutuhkan modal besar dalam waktu sangat singkat.",
+                        "referensi": [
+                            "https://www.investopedia.com/flash-loans-5190977",
+                            "https://aave.com/flash-loans/"
+                        ]
                     }
                 },
                 {
                     "id": "zero_knowledge_proof",
                     "title": "Zero-Knowledge Proof",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Bukti matematis tanpa reveal data asli.",
-                        "contoh": "ZK-SNARK di Zcash, bukti kamu punya uang tanpa tunjukkan jumlahnya."
+                        "bahasa": "Zero-Knowledge = Tanpa Pengetahuan, Proof = Bukti → Bukti yang tidak mengungkapkan pengetahuan apapun.",
+                        "istilah": "Metode kriptografi yang memungkinkan seseorang membuktikan bahwa sebuah pernyataan itu benar, tanpa harus mengungkapkan informasi rahasia di baliknya.",
+                        "contoh": "Membuktikan bahwa kamu punya saldo yang cukup untuk membayar, tanpa harus menunjukkan jumlah total saldomu.",
+                        "kenapaAda": "Untuk meningkatkan privasi dan keamanan dalam transaksi blockchain, memungkinkan verifikasi tanpa membocorkan data sensitif.",
+                        "referensi": [
+                            "https://ethereum.org/en/zero-knowledge-proofs/",
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-zero-knowledge-proof"
+                        ]
                     }
                 },
                 {
                     "id": "scam",
                     "title": "Scam/Rug Pull/Phishing/Drainer",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Jenis penipuan crypto (scam=penipuan umum, rug pull=proyek kabur, phishing=jebakan link, drainer=curi wallet).",
-                        "contoh": "Link phishing yang minta password wallet."
+                        "bahasa": "Scam = Penipuan. Rug Pull = Tarik Karpet (kiasan). Phishing = Memancing (informasi). Drainer = Penguras (aset).",
+                        "istilah": "Berbagai jenis penipuan di dunia kripto. Scam (umum), Rug pull (developer kabur membawa uang), Phishing (situs palsu untuk mencuri data), Drainer (skrip jahat yang menguras dompet).",
+                        "contoh": "Menerima email palsu yang meminta kamu memasukkan 'seed phrase' dompetmu di sebuah link (ini adalah phishing).",
+                        "kenapaAda": "Istilah-istilah ini ada untuk mengkategorikan berbagai modus penipuan yang memanfaatkan sifat desentralisasi kripto untuk mencuri dana.",
+                        "referensi": [
+                            "https://www.kaspersky.com/resource-center/definitions/what-is-a-crypto-scam",
+                            "https://www.coinbase.com/learn/crypto-basics/common-crypto-scams"
+                        ]
                     }
                 },
                 {
                     "id": "internet_computer",
                     "title": "Internet Computer (IC)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Platform blockchain yang bisa jalankan app web penuh tanpa server tradisional.",
-                        "contoh": "Jalankan website langsung di blockchain."
+                        "bahasa": "Internet = Internet, Computer = Komputer → Sebuah komputer global yang berjalan di atas internet.",
+                        "istilah": "Sebuah proyek blockchain yang bertujuan untuk memperluas fungsionalitas internet, memungkinkannya untuk menjadi platform komputasi global yang terdesentralisasi.",
+                        "contoh": "Membangun dan menjalankan website atau aplikasi media sosial secara penuh langsung di atas blockchain, tanpa perlu server cloud tradisional.",
+                        "kenapaAda": "Untuk menyediakan infrastruktur terdesentralisasi yang bisa menjalankan aplikasi web dengan kecepatan tinggi, mengurangi ketergantungan pada layanan cloud terpusat.",
+                        "referensi": [
+                            "https://internetcomputer.org/",
+                            "https://dfinity.org/"
+                        ]
                     }
                 },
                 {
                     "id": "canister",
                     "title": "Canister",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Smart contract di IC, seperti container yang simpan kode dan data."
+                        "bahasa": "Canister = Tabung/Wadah → Wadah yang mandiri untuk menyimpan kode dan data.",
+                        "istilah": "Unit komputasi di Internet Computer, bisa dianggap sebagai versi lebih canggih dari smart contract. Setiap canister berisi kode program dan data yang dibutuhkan.",
+                        "contoh": "Satu canister bisa berisi backend untuk aplikasi, sementara canister lain berisi frontend-nya.",
+                        "kenapaAda": "Sebagai unit dasar untuk membangun aplikasi di Internet Computer, menggabungkan kode dan data dalam satu paket yang dapat diskalakan.",
+                        "referensi": [
+                            "https://internetcomputer.org/docs/current/concepts/canisters-code",
+                            "https://wiki.internetcomputer.org/wiki/Canister"
+                        ]
                     }
                 },
                 {
                     "id": "motoko",
                     "title": "Motoko",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Bahasa pemrograman khusus untuk IC, mirip Rust tapi lebih sederhana.",
-                        "contoh": "Kode canister ditulis di Motoko."
+                        "bahasa": "Nama sebuah bahasa pemrograman, bukan akronim. Terinspirasi dari karakter anime.",
+                        "istilah": "Bahasa pemrograman yang dirancang khusus untuk memudahkan pembuatan program (canister) di atas platform Internet Computer.",
+                        "contoh": "Menulis kode canister untuk sebuah dApp menggunakan bahasa Motoko.",
+                        "kenapaAda": "Diciptakan oleh DFINITY untuk memudahkan dan mengamankan pengembangan di Internet Computer, dengan sintaks yang familiar bagi developer web.",
+                        "referensi": [
+                            "https://internetcomputer.org/docs/current/developer-docs/build/cdks/motoko-dfx/motoko",
+                            "https://github.com/dfinity/motoko"
+                        ]
                     }
                 },
                 {
                     "id": "principal",
                     "title": "Principal",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "ID unik untuk user atau canister di IC.",
-                        "contoh": "ID seperti username di IC."
+                        "bahasa": "Principal = Utama/Pokok → Entitas utama atau identitas fundamental.",
+                        "istilah": "ID unik yang dimiliki oleh setiap pengguna atau canister di jaringan Internet Computer. Fungsinya mirip seperti username atau identitas digital.",
+                        "contoh": "Principal ID digunakan untuk mengontrol siapa saja yang boleh mengakses atau mengubah data di dalam sebuah canister.",
+                        "kenapaAda": "Sebagai sistem identitas fundamental di Internet Computer yang digunakan untuk keamanan dan kontrol akses.",
+                        "referensi": [
+                            "https://internetcomputer.org/docs/current/references/glossary#principal",
+                            "https://medium.com/plugwallet/internet-computer-ids-101-e75f335b1390"
+                        ]
                     }
                 },
                 {
                     "id": "cycles",
                     "title": "Cycles",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "\\\"Mata uang\\\" di IC untuk bayar komputasi (seperti gas fee di ETH).",
-                        "contoh": "Bayar cycles untuk run canister."
+                        "bahasa": "Cycles = Siklus → Merujuk pada siklus komputasi sebagai unit biaya.",
+                        "istilah": "Unit 'bahan bakar' yang digunakan untuk membayar biaya komputasi dan penyimpanan di jaringan Internet Computer, mirip dengan 'gas fee' di Ethereum.",
+                        "contoh": "Canister harus diisi dengan 'cycles' agar bisa terus berjalan dan melayani permintaan pengguna.",
+                        "kenapaAda": "Sebagai alat bayar untuk sumber daya komputasi di jaringan, memastikan para penyedia node mendapatkan kompensasi.",
+                        "referensi": [
+                            "https://internetcomputer.org/docs/current/concepts/tokens-cycles/cycles",
+                            "https://wiki.internetcomputer.org/wiki/Cycles"
+                        ]
                     }
                 },
                 {
                     "id": "dfx",
                     "title": "dfx",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Command-line tool untuk develop di IC (seperti npm untuk Node.js).",
-                        "contoh": "`dfx deploy` untuk upload canister."
+                        "bahasa": "Singkatan dari DFINITY SDK, di mana 'FX' adalah kependekan dari 'Effects' atau 'Framework eXtension'.",
+                        "istilah": "Alat baris perintah (command-line tool) yang menjadi 'pisau Swiss' bagi para developer Internet Computer untuk membuat, mengelola, dan mendeploy canister.",
+                        "contoh": "Menjalankan perintah `dfx deploy` di terminal untuk mengunggah canister ke jaringan IC.",
+                        "kenapaAda": "Untuk menyederhanakan alur kerja developer saat membangun aplikasi di Internet Computer.",
+                        "referensi": [
+                            "https://internetcomputer.org/docs/current/references/cli-reference/",
+                            "https://github.com/dfinity/dfx"
+                        ]
                     }
                 },
                 {
                     "id": "icrc_1",
                     "title": "ICRC-1",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Standar token di IC, mirip ERC-20 di Ethereum.",
-                        "contoh": "Token yang ikut standar ICRC-1 bisa dipertukarkan."
+                        "bahasa": "ICRC = Internet Computer Request for Comment → Permintaan Komentar dari Komunitas Internet Computer.",
+                        "istilah": "Standar teknis untuk token yang dapat dipertukarkan (fungible) di jaringan Internet Computer. Ini mirip dengan standar ERC-20 di Ethereum.",
+                        "contoh": "Sebuah token yang mengikuti standar ICRC-1 akan mudah diintegrasikan dengan semua dompet dan DEX di ekosistem IC.",
+                        "kenapaAda": "Untuk memastikan semua token di ekosistem IC bisa 'berbicara' dalam bahasa yang sama, sehingga mudah digunakan di berbagai aplikasi.",
+                        "referensi": [
+                            "https://github.com/dfinity/ICRC-1",
+                            "https://internetcomputer.org/docs/current/developer-docs/integrations/icrc-1/"
+                        ]
+                    }
+                },
+                {
+                    "id": "erc_20",
+                    "title": "ERC-20",
+                    "definitions": {
+                        "bahasa": "ERC = Ethereum Request for Comment → Permintaan Komentar dari Komunitas Ethereum.",
+                        "istilah": "Standar teknis paling populer untuk membuat token yang dapat dipertukarkan (fungible) di blockchain Ethereum. Sebagian besar token di Ethereum menggunakan standar ini.",
+                        "contoh": "Token seperti USDT, SHIB, dan UNI adalah contoh token ERC-20.",
+                        "kenapaAda": "Untuk menciptakan satu set aturan dasar yang seragam bagi semua token di Ethereum, sehingga mereka bisa bekerja sama dengan mulus di berbagai aplikasi seperti dompet dan DEX.",
+                        "referensi": [
+                            "https://ethereum.org/en/developers/docs/standards/tokens/erc-20/"
+                        ]
                     }
                 },
                 {
                     "id": "wasm",
                     "title": "WASM (WebAssembly)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Format bytecode untuk run kode di browser/web.",
-                        "contoh": "Kode yang compile ke WASM jalan cepat di web."
+                        "bahasa": "Web = Web, Assembly = Bahasa Rakitan → Bahasa rakitan untuk web.",
+                        "istilah": "Sebuah format kode biner yang dirancang agar bisa berjalan dengan sangat cepat di browser web. Banyak bahasa pemrograman (seperti Rust, C++) bisa dikompilasi ke WASM.",
+                        "contoh": "Canister di Internet Computer berjalan sebagai modul WASM, yang memungkinkannya berkinerja tinggi.",
+                        "kenapaAda": "Untuk memungkinkan aplikasi web yang kompleks dan berat (seperti game 3D atau editor video) berjalan dengan kecepatan mendekati aplikasi desktop.",
+                        "referensi": [
+                            "https://webassembly.org/",
+                            "https://developer.mozilla.org/en-US/docs/WebAssembly"
+                        ]
                     }
                 },
                 {
                     "id": "icp",
                     "title": "ICP (Internet Computer Protocol)",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Protokol dasar IC untuk jaringan dan canister.",
-                        "contoh": "ICP handle komunikasi antar canister."
+                        "bahasa": "Internet Computer = Komputer Internet, Protocol = Protokol → Protokol untuk Internet Computer.",
+                        "istilah": "Sekumpulan aturan dan teknologi inti yang mengatur bagaimana jaringan Internet Computer beroperasi, termasuk bagaimana node berkomunikasi dan canister dieksekusi.",
+                        "contoh": "Protokol ICP mengatur bagaimana data direplikasi antar node untuk memastikan keamanan dan ketersediaan.",
+                        "kenapaAda": "Sebagai fondasi teknis yang memungkinkan jaringan node terdesentralisasi untuk bersama-sama membentuk satu 'komputer internet' raksasa.",
+                        "referensi": [
+                            "https://internetcomputer.org/how-it-works/",
+                            "https://wiki.internetcomputer.org/wiki/Internet_Computer_Protocol"
+                        ]
                     }
                 },
                 {
                     "id": "candid",
                     "title": "Candid",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Bahasa untuk deskripsi interface canister di IC.",
-                        "contoh": "Candid define fungsi seperti \\\"analyze_address\\\"."
+                        "bahasa": "Candid = Jujur/Terus Terang → Bahasa yang mendeskripsikan antarmuka secara jelas dan terus terang.",
+                        "istilah": "Bahasa deskripsi yang digunakan di Internet Computer agar canister yang ditulis dalam bahasa pemrograman berbeda (misal Motoko dan Rust) bisa saling berkomunikasi.",
+                        "contoh": "Candid mendefinisikan tipe data dan fungsi yang bisa dipanggil oleh canister lain, seperti `getUser(id)` yang akan mengembalikan data pengguna.",
+                        "kenapaAda": "Bertindak sebagai 'penerjemah universal' antar canister, memungkinkan interoperabilitas yang mulus di dalam ekosistem IC.",
+                        "referensi": [
+                            "https://internetcomputer.org/docs/current/references/candid-ref",
+                            "https://github.com/dfinity/candid"
+                        ]
                     }
                 },
                 {
                     "id": "replica",
                     "title": "Replica",
                     "definitions": {
-                        "bahasa": "-",
-                        "istilah": "Node (komputer) di IC yang jalankan dan simpan canister.",
-                        "contoh": "Replica di seluruh dunia pastikan app selalu online."
+                        "bahasa": "Replica = Salinan/Tiruan → Salinan atau tiruan dari sebuah proses atau data.",
+                        "istilah": "Perangkat lunak yang berjalan di setiap node dalam jaringan Internet Computer. Replica ini yang mengeksekusi kode canister dan menyimpan datanya.",
+                        "contoh": "Sebuah canister tidak hanya berjalan di satu node, tapi direplikasi di beberapa node dalam satu subnet untuk memastikan aplikasi selalu online dan aman.",
+                        "kenapaAda": "Untuk mencapai desentralisasi dan ketahanan. Jika satu node mati, replica di node lain akan tetap menjaga aplikasi berjalan.",
+                        "referensi": [
+                            "https://internetcomputer.org/how-it-works/#Replicas",
+                            "https://wiki.internetcomputer.org/wiki/Replica"
+                        ]
+                    }
+                },
+                {
+                    "id": "node",
+                    "title": "Node",
+                    "definitions": {
+                        "bahasa": "Node = Simpul/Titik → Sebuah titik dalam jaringan.",
+                        "istilah": "Sebuah komputer yang terhubung ke jaringan blockchain dan menyimpan salinan dari buku besar blockchain. Node bertugas memvalidasi dan menyebarkan transaksi.",
+                        "contoh": "Siapa pun bisa menjalankan node Bitcoin di komputer mereka untuk membantu menjaga keamanan jaringan.",
+                        "kenapaAda": "Node adalah tulang punggung dari jaringan terdesentralisasi. Semakin banyak node, semakin aman dan kuat jaringan tersebut.",
+                        "referensi": [
+                            "https://www.coinbase.com/learn/crypto-basics/what-is-a-node"
+                        ]
+                    }
+                },
+                {
+                    "id": "ethereum",
+                    "title": "Ethereum",
+                    "definitions": {
+                        "bahasa": "Berasal dari kata 'Aether', elemen klasik yang diyakini mengisi alam semesta → Platform komputasi global.",
+                        "istilah": "Sebuah platform blockchain terdesentralisasi yang bisa menjalankan smart contract. Ini bukan hanya mata uang, tapi sebuah 'komputer dunia' tempat para developer bisa membangun dan menjalankan aplikasi (dApps).",
+                        "contoh": "Sebagian besar dunia DeFi dan NFT pertama kali dibangun dan populer di atas platform Ethereum.",
+                        "kenapaAda": "Diciptakan untuk memperluas fungsi blockchain lebih dari sekadar transaksi uang (seperti Bitcoin), memungkinkan pembuatan aplikasi terdesentralisasi yang kompleks.",
+                        "referensi": [
+                            "https://ethereum.org/en/what-is-ethereum/"
+                        ]
+                    }
+                },
+                {
+                    "id": "ether",
+                    "title": "Ether (ETH)",
+                    "definitions": {
+                        "bahasa": "Ether = Zat ringan yang diyakini mengisi alam semesta → 'Bahan bakar' untuk jaringan Ethereum.",
+                        "istilah": "Mata uang kripto asli dari jaringan Ethereum. ETH digunakan untuk membayar biaya transaksi (gas fee) dan sebagai jaminan (kolateral) dalam berbagai aplikasi DeFi.",
+                        "contoh": "Kamu membutuhkan ETH di dompetmu untuk membeli sebuah NFT di OpenSea atau untuk membayar biaya saat mengirim token lain di jaringan Ethereum.",
+                        "kenapaAda": "Sebagai insentif ekonomi bagi para validator yang mengamankan jaringan dan sebagai alat bayar untuk semua aktivitas komputasi yang terjadi di platform Ethereum.",
+                        "referensi": [
+                            "https://ethereum.org/en/eth/"
+                        ]
                     }
                 }
             ]
@@ -346,26 +665,70 @@
                     "id": "fullstack",
                     "title": "Fullstack",
                     "definitions": {
-                        "bahasa": "Full = penuh, Stack = tumpukan → menguasai semua lapisan.",
-                        "istilah": "Orang yang bisa mengerjakan frontend dan backend sekaligus."
+                        "bahasa": "Full = Penuh, Stack = Tumpukan (teknologi) → Menguasai seluruh tumpukan teknologi.",
+                        "istilah": "Seorang developer yang memiliki keahlian di sisi frontend (tampilan) dan backend (mesin) dari sebuah aplikasi.",
+                        "contoh": "Seorang fullstack developer bisa mendesain tombol di website (frontend) sekaligus membuat sistem login yang aman (backend).",
+                        "kenapaAda": "Agar satu orang bisa mengerjakan proyek dari awal hingga akhir, sangat berguna di tim kecil atau untuk membuat prototipe dengan cepat.",
+                        "referensi": [
+                            "https://www.w3schools.com/whatis/whatis_fullstack.asp",
+                            "https://skillcrush.com/blog/what-is-a-full-stack-developer/"
+                        ]
                     }
                 },
                 {
                     "id": "backend",
                     "title": "Backend",
                     "definitions": {
-                        "bahasa": "Back = belakang, End = ujung → bagian belakang dari sistem.",
-                        "istilah": "Bagian dari aplikasi yang bekerja di server, mengatur data, logika, dan komunikasi.",
-                        "kenapaAda": "Supaya aplikasi bisa menyimpan data dan melakukan perhitungan yang tidak mungkin dilakukan di browser.",
-                        "contoh": "Login, database, API."
+                        "bahasa": "Back = Belakang, End = Ujung → Bagian belakang dari sistem.",
+                        "istilah": "Bagian 'dapur' dari sebuah aplikasi yang tidak terlihat oleh pengguna. Ini mencakup server, database, dan logika aplikasi.",
+                        "contoh": "Saat kamu login di sebuah aplikasi, proses verifikasi username dan password terjadi di backend.",
+                        "kenapaAda": "Untuk memproses dan menyimpan data, menjalankan logika bisnis, dan memastikan aplikasi berjalan dengan aman dan efisien.",
+                        "referensi": [
+                            "https://www.geeksforgeeks.org/what-is-backend-development/",
+                            "https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Introduction"
+                        ]
                     }
                 },
                 {
                     "id": "frontend",
                     "title": "Frontend",
                     "definitions": {
-                        "bahasa": "Front = depan, End = ujung → bagian depan dari sistem.",
-                        "istilah": "Bagian aplikasi yang dilihat user langsung di layar."
+                        "bahasa": "Front = Depan, End = Ujung → Bagian depan dari sistem.",
+                        "istilah": "Bagian dari aplikasi yang kamu lihat dan berinteraksi dengannya. Ini mencakup semua elemen visual seperti tombol, teks, dan gambar.",
+                        "contoh": "Tampilan layout Instagram, tombol 'Like', dan kolom komentar adalah bagian dari frontend.",
+                        "kenapaAda": "Untuk menyajikan data dari backend dalam format yang menarik dan mudah digunakan oleh pengguna.",
+                        "referensi": [
+                            "https://www.geeksforgeeks.org/what-is-front-end-development/",
+                            "https://developer.mozilla.org/en-US/docs/Learn/Front-end_web_developer"
+                        ]
+                    }
+                },
+                {
+                    "id": "api",
+                    "title": "API (Application Programming Interface)",
+                    "definitions": {
+                        "bahasa": "Interface = Antarmuka → Antarmuka pemrograman untuk aplikasi.",
+                        "istilah": "Jembatan penghubung yang memungkinkan dua aplikasi berbeda untuk saling berbicara dan bertukar data. Ini adalah 'pelayan' yang mengambil permintaanmu dan membawakannya ke 'dapur' (backend).",
+                        "contoh": "Aplikasi cuaca di ponselmu menggunakan API untuk meminta data cuaca terbaru dari server pusat.",
+                        "kenapaAda": "Agar developer tidak perlu membangun semuanya dari nol. Mereka bisa menggunakan fungsionalitas dari aplikasi lain melalui API.",
+                        "referensi": [
+                            "https://www.mulesoft.com/resources/api/what-is-an-api",
+                            "https://aws.amazon.com/what-is/api/"
+                        ]
+                    }
+                },
+                {
+                    "id": "database",
+                    "title": "Database",
+                    "definitions": {
+                        "bahasa": "Data = Data, Base = Basis → Basis atau kumpulan data.",
+                        "istilah": "Sistem terorganisir untuk menyimpan, mengelola, dan mengambil data elektronik dalam jumlah besar. Ini seperti lemari arsip digital.",
+                        "contoh": "Saat kamu membuat akun di sebuah website, informasi seperti username dan emailmu disimpan di dalam database.",
+                        "kenapaAda": "Untuk menyimpan data aplikasi secara terstruktur agar mudah diakses dan dikelola oleh backend.",
+                        "referensi": [
+                            "https://www.oracle.com/database/what-is-database/",
+                            "https://www.ibm.com/topics/database"
+                        ]
                     }
                 }
             ]
@@ -376,14 +739,19 @@
             "terms": [
                 {
                     "id": "ai",
-                    "title": "Artificial Intelligence",
+                    "title": "Artificial Intelligence (AI)",
                     "definitions": {
-                        "bahasa": "Artificial = buatan, Intelligence = kecerdasan → kecerdasan buatan.",
-                        "istilah": "Kemampuan komputer untuk meniru kecerdasan manusia."
+                        "bahasa": "Artificial = Buatan, Intelligence = Kecerdasan → Kecerdasan buatan.",
+                        "istilah": "Bidang ilmu komputer yang bertujuan menciptakan mesin yang bisa berpikir dan bertindak seperti manusia. Machine Learning adalah salah satu cabangnya.",
+                        "contoh": "Asisten suara seperti Siri atau Google Assistant, serta mobil yang bisa menyetir sendiri.",
+                        "kenapaAda": "Untuk mengotomatiskan tugas-tugas kompleks, memecahkan masalah besar, dan membantu manusia dalam pengambilan keputusan.",
+                        "referensi": [
+                            "https://www.ibm.com/topics/artificial-intelligence",
+                            "https://www.oracle.com/artificial-intelligence/what-is-ai/"
+                        ]
                     }
                 }
             ]
         }
-     
     ]
 }
