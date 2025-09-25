@@ -267,13 +267,10 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
     useEffect(() => {
         if (hasLoadedRef.current) return; // Skip if already loaded (for React strict mode)
         const savedData = localStorage.getItem('bulk-data-editor-data');
-        console.log('Loading data from localStorage:', savedData);
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
-                console.log('Parsed data:', parsed);
                 const loadedTerms = parsed.terms && Array.isArray(parsed.terms) ? (parsed.terms.length > 0 ? parsed.terms : [{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]) : [{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }];
-                console.log('Loaded terms:', loadedTerms);
                 setTerms(loadedTerms);
                 setNotes(parsed.notes || '');
             } catch (error) {
@@ -283,7 +280,6 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
                 setNotes('');
             }
         } else {
-            console.log('No data in localStorage, setting defaults');
             // Jika tidak ada data, set default
             setTerms([{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]);
             setNotes('');
@@ -294,7 +290,6 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
     // Save data to localStorage whenever terms or notes change
     useEffect(() => {
         if (!hasLoadedRef.current) return; // Skip save until data has been loaded
-        console.log('Saving data to localStorage:', { terms, notes });
         const dataToSave = { terms, notes };
         localStorage.setItem('bulk-data-editor-data', JSON.stringify(dataToSave));
     }, [terms, notes]);
