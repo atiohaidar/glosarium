@@ -259,10 +259,45 @@ interface BulkDataEditorProps {
 }
 
 const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
-    const [terms, setTerms] = useState<TermData[]>([
-        { id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }
-    ]);
+    const [terms, setTerms] = useState<TermData[]>([]);
     const [notes, setNotes] = useState<string>('');
+    const hasLoadedRef = useRef(false);
+
+    // Load data from localStorage on mount
+    useEffect(() => {
+        if (hasLoadedRef.current) return; // Skip if already loaded (for React strict mode)
+        const savedData = localStorage.getItem('bulk-data-editor-data');
+        console.log('Loading data from localStorage:', savedData);
+        if (savedData) {
+            try {
+                const parsed = JSON.parse(savedData);
+                console.log('Parsed data:', parsed);
+                const loadedTerms = parsed.terms && Array.isArray(parsed.terms) ? (parsed.terms.length > 0 ? parsed.terms : [{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]) : [{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }];
+                console.log('Loaded terms:', loadedTerms);
+                setTerms(loadedTerms);
+                setNotes(parsed.notes || '');
+            } catch (error) {
+                console.error('Failed to load data from localStorage:', error);
+                // Jika error, set default
+                setTerms([{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]);
+                setNotes('');
+            }
+        } else {
+            console.log('No data in localStorage, setting defaults');
+            // Jika tidak ada data, set default
+            setTerms([{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]);
+            setNotes('');
+        }
+        hasLoadedRef.current = true;
+    }, []);
+
+    // Save data to localStorage whenever terms or notes change
+    useEffect(() => {
+        if (!hasLoadedRef.current) return; // Skip save until data has been loaded
+        console.log('Saving data to localStorage:', { terms, notes });
+        const dataToSave = { terms, notes };
+        localStorage.setItem('bulk-data-editor-data', JSON.stringify(dataToSave));
+    }, [terms, notes]);
 
     const addTerm = () => {
         const newTerm: TermData = {
@@ -279,6 +314,14 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
     const updateTerm = useCallback((termId: string, updatedFields: Partial<TermData>) => {
         setTerms(prev => prev.map(term => term.id === termId ? { ...term, ...updatedFields } : term));
     }, []);
+
+    const clearAllData = () => {
+        if (window.confirm('Apakah Anda yakin ingin menghapus semua data? Data yang belum di-export akan hilang.')) {
+            setTerms([{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]);
+            setNotes('');
+            localStorage.removeItem('bulk-data-editor-data');
+        }
+    };
 
     const focusNextField = useCallback((currentTermId: string, currentField: string) => {
         const fieldOrder = ['title', 'istilah', 'bahasa', 'kenapaAda', 'contoh', 'referensi'];
@@ -368,6 +411,9 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
                         <ArrowUpTrayIcon className="w-4 h-4" /> Import
                         <input type="file" accept=".json" onChange={importData} className="hidden" />
                     </label>
+                    <button onClick={clearAllData} className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500">
+                        <TrashIcon className="w-4 h-4" /> Clear All Data
+                    </button>
                 </div>
 
                 <div className="mb-8 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-primary)] p-6">
