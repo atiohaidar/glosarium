@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { PlusIcon, TrashIcon, ArrowDownTrayIcon, ArrowUpTrayIcon } from './icons';
+// Pastikan path icon benar. Jika tidak ada, Anda bisa menggantinya dengan emoji atau teks.
+// import { PlusIcon, TrashIcon, ArrowDownTrayIcon, ArrowUpTrayIcon } from './icons'; 
 
+// Placeholder Icons jika file tidak ada
+const PlusIcon = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>;
+const TrashIcon = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>;
+const ArrowDownTrayIcon = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>;
+const ArrowUpTrayIcon = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l4 4m0 0l4-4m-4 4V4" /></svg>;
+
+// --- INTERFACE & DATA STRUCTURE ---
 interface TermData {
     id: string;
     title: string;
@@ -12,739 +20,385 @@ interface TermData {
     referensi: string[];
 }
 
+// --- KONSTANTA (PRINSIP DRY) ---
+const markdownComponents = {
+    p: ({ children }) => <p className="mb-1 text-[var(--text-primary)]">{children}</p>,
+    strong: ({ children }) => <strong className="font-bold text-[var(--text-primary)]">{children}</strong>,
+    em: ({ children }) => <em className="italic text-[var(--text-primary)]">{children}</em>,
+    code: ({ children }) => <code className="bg-gray-700 px-1 py-0.5 rounded text-green-400 font-mono text-sm">{children}</code>,
+    pre: ({ children }) => <pre className="bg-gray-800 p-2 rounded text-green-400 font-mono text-sm overflow-x-auto my-1 whitespace-pre-wrap">{children}</pre>,
+};
+
+// --- SUB-KOMPONEN 1: EditableField ---
+interface EditableFieldProps {
+    value: string;
+    placeholder: string;
+    onChange: (value: string) => void;
+    onCommit?: () => void;
+    isTextarea?: boolean;
+    supportsMarkdown?: boolean;
+    rows?: number;
+    className?: string;
+    inputClassName?: string;
+    fieldName?: string;
+}
+
+const EditableField: React.FC<EditableFieldProps> = React.memo(({
+    value,
+    placeholder,
+    onChange,
+    onCommit,
+    isTextarea = false,
+    supportsMarkdown = false,
+    rows = 1, // Default rows menjadi 1, akan mengembang dari sana
+    className = '',
+    inputClassName = '',
+    fieldName = '',
+}) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+    // --- PERBAIKAN 2: LOGIKA AUTO-GROWING TEXTAREA ---
+    useEffect(() => {
+        if (isEditing && inputRef.current && isTextarea) {
+            const el = inputRef.current;
+            el.style.height = 'auto'; // Reset height
+            el.style.height = `${el.scrollHeight}px`; // Set to content height
+        }
+    }, [value, isEditing, isTextarea]); // Jalankan setiap kali nilai atau status edit berubah
+
+    useEffect(() => {
+        if (isEditing) {
+            inputRef.current?.focus();
+            const len = inputRef.current?.value.length ?? 0;
+            inputRef.current?.setSelectionRange(len, len);
+        }
+    }, [isEditing]);
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            if (!isTextarea || (isTextarea && onCommit)) {
+                e.preventDefault();
+                setIsEditing(false);
+                onCommit?.();
+            }
+        } else if (e.key === 'Escape') {
+            setIsEditing(false);
+        }
+    };
+
+    if (isEditing) {
+        const commonProps = {
+            value: value,
+            onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value),
+            onBlur: () => setIsEditing(false),
+            onKeyDown: handleKeyDown,
+            className: `w-full px-3 py-2 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-none shadow-sm hover:shadow-md transition-shadow ${inputClassName}`,
+            'data-field-id': fieldName ? `field-${fieldName}` : undefined
+        };
+
+        if (supportsMarkdown && isTextarea) {
+            return (
+                <div className="relative">
+                    <textarea
+                        {...commonProps}
+                        ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+                        rows={rows}
+                        placeholder={placeholder}
+                    />
+                </div>
+            );
+        }
+
+        return isTextarea
+            ? <textarea {...commonProps} ref={inputRef as React.RefObject<HTMLTextAreaElement>} rows={rows} placeholder={placeholder} className={`${commonProps.className} overflow-hidden`} />
+            : <input {...commonProps} ref={inputRef as React.RefObject<HTMLInputElement>} type="text" placeholder={placeholder} />;
+    }
+
+    return (
+        <div
+            className={`group cursor-pointer p-2 -m-2 rounded transition-colors min-h-[40px] ${className}`}
+            onClick={() => setIsEditing(true)}
+            data-field-id={fieldName ? `field-${fieldName}` : undefined}
+        >
+            <div className="flex items-start justify-between">
+                <div className="text-[var(--text-primary)] whitespace-pre-wrap flex-1">
+                    {value.trim() ? (
+                        (fieldName === 'istilah' || fieldName === 'bahasa' || fieldName === 'kenapaAda' || fieldName === 'contoh') ? (
+                            <ReactMarkdown components={markdownComponents}>{value}</ReactMarkdown>
+                        ) : value
+                    ) : (
+                        <span className="text-[var(--text-secondary)]">{placeholder}</span>
+                    )}
+                </div>
+                <button
+                    onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
+                    className="opacity-0 group-hover:opacity-100 px-2 py-1 text-sky-600 hover:bg-sky-50 rounded transition-all ml-2"
+                    title="Edit"
+                >✏️</button>
+            </div>
+        </div>
+    );
+});
+
+// --- SUB-KOMPONEN 2: TermItem ---
+// Tidak ada perubahan di sini
+interface TermItemProps {
+    term: TermData;
+    onUpdate: (termId: string, updatedTerm: Partial<TermData>) => void;
+    onRemove: (termId: string) => void;
+    isDeletable: boolean;
+    focusNextField: (currentTermId: string, currentField: string) => void;
+}
+
+const TermItem: React.FC<TermItemProps> = React.memo(({ term, onUpdate, onRemove, isDeletable, focusNextField }) => {
+    const handleFieldUpdate = (field: keyof Omit<TermData, 'id'>, value: string | string[]) => {
+        onUpdate(term.id, { [field]: value });
+    };
+
+    const addReference = () => {
+        const newRefs = [...term.referensi, ''];
+        handleFieldUpdate('referensi', newRefs);
+        setTimeout(() => {
+            const lastRefInput = document.querySelector(`[data-term-id="${term.id}"] [data-field-id="field-referensi-${newRefs.length - 1}"]`) as HTMLElement;
+            lastRefInput?.click();
+        }, 0);
+    };
+
+    const updateReference = (index: number, value: string) => {
+        const newReferensi = term.referensi.map((ref, i) => i === index ? value : ref);
+        handleFieldUpdate('referensi', newReferensi);
+    };
+
+    const removeReference = (index: number) => {
+        const newReferensi = term.referensi.filter((_, i) => i !== index);
+        handleFieldUpdate('referensi', newReferensi);
+    };
+
+    const fieldOrder = useMemo(() => ['title', 'istilah', 'bahasa', 'kenapaAda', 'contoh', 'referensi'], []);
+
+    return (
+        <div className="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-primary)] overflow-hidden" data-term-id={term.id}>
+            <div className="p-6">
+                <table className="w-full border-collapse">
+                    <tbody>
+                        <tr className="border-b-2 border-[var(--border-primary)] bg-[var(--bg-tertiary)]/50">
+                            <td colSpan={2} className="px-4 py-6 text-center">
+                                <EditableField
+                                    value={term.title}
+                                    placeholder="Masukkan nama istilah..."
+                                    onChange={(value) => handleFieldUpdate('title', value)}
+                                    onCommit={() => focusNextField(term.id, 'title')}
+                                    inputClassName="font-bold text-xl text-center min-w-[400px]"
+                                    fieldName="title"
+                                />
+                            </td>
+                        </tr>
+                        {fieldOrder.slice(1, -1).map(field => (
+                            <tr key={field} className="border-b border-[var(--border-primary)]">
+                                <td className="px-4 py-3 font-semibold text-[var(--text-primary)] w-48 align-top capitalize">
+                                    {field === 'kenapaAda' ? 'Alasan Keberadaan' : (field === 'istilah' ? 'Definisi' : (field === 'contoh' ? 'Contoh' : 'Arti Bahasa'))}
+                                </td>
+                                <td className="px-4 py-3">
+                                    <EditableField
+                                        value={term[field as keyof TermData] as string}
+                                        placeholder={`Masukkan ${field}...`}
+                                        onChange={(value) => handleFieldUpdate(field as keyof TermData, value)}
+                                        onCommit={() => focusNextField(term.id, field)}
+                                        isTextarea={['istilah', 'kenapaAda', 'contoh'].includes(field)}
+                                        rows={2} // Nilai rows kini berfungsi sebagai tinggi minimal
+                                        fieldName={field}
+                                    />
+                                </td>
+                            </tr>
+                        ))}
+                        <tr>
+                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] align-top">Referensi</td>
+                            <td className="px-4 py-3 space-y-3">
+                                {term.referensi.map((ref, refIndex) => (
+                                    <div key={refIndex} className="flex items-center gap-2">
+                                        <div className="flex-1">
+                                            <EditableField
+                                                value={ref}
+                                                placeholder="https://..."
+                                                onChange={(value) => updateReference(refIndex, value)}
+                                                onCommit={addReference}
+                                                inputClassName="text-sm"
+                                                fieldName={`referensi-${refIndex}`}
+                                            />
+                                        </div>
+                                        {term.referensi.length > 1 && (
+                                            <button onClick={() => removeReference(refIndex)} className="p-2 text-red-500 hover:bg-red-500/10 rounded"><TrashIcon className="w-4 h-4" /></button>
+                                        )}
+                                    </div>
+                                ))}
+                                <button onClick={addReference} className="w-full px-3 py-2 text-sky-600 hover:bg-sky-50 border-2 border-dashed border-sky-300 rounded-lg hover:border-sky-500 transition-colors text-sm font-medium">
+                                    + Tambah Referensi
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                {isDeletable && (
+                    <div className="mt-4 flex justify-end">
+                        <button onClick={() => onRemove(term.id)} className="px-4 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2 border border-red-200">
+                            <TrashIcon className="w-4 h-4" /> Hapus Istilah
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+});
+
+
+// --- KOMPONEN UTAMA: BulkDataEditor ---
+// Tidak ada perubahan signifikan di sini
 interface BulkDataEditorProps {
     onBack?: () => void;
 }
 
 const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
     const [terms, setTerms] = useState<TermData[]>([
-        {
-            id: 'term-1',
-            title: '',
-            istilah: '',
-            bahasa: '',
-            kenapaAda: '',
-            contoh: '',
-            referensi: ['']
-        }
+        { id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }
     ]);
-    const [editingFields, setEditingFields] = useState<Set<string>>(new Set());
     const [notes, setNotes] = useState<string>('');
-
-    // Focus to title on initial load for new terms
-    useEffect(() => {
-        terms.forEach(term => {
-            if (!term.title.trim()) {
-                const titleFieldId = `${term.id}-title`;
-                if (!editingFields.has(titleFieldId)) {
-                    setEditingFields(prev => new Set(prev).add(titleFieldId));
-                }
-            }
-        });
-    }, [terms.length]); // Only run when terms array length changes (new term added)
 
     const addTerm = () => {
         const newTerm: TermData = {
-            id: `term-${terms.length + 1}`,
-            title: '',
-            istilah: '',
-            bahasa: '',
-            kenapaAda: '',
-            contoh: '',
-            referensi: ['']
+            id: `term-${Date.now()}`,
+            title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: ['']
         };
-        setTerms([...terms, newTerm]);
+        setTerms(prev => [...prev, newTerm]);
     };
 
-    const removeTerm = (termId: string) => {
-        if (terms.length > 1) {
-            setTerms(terms.filter(term => term.id !== termId));
-        }
-    };
+    const removeTerm = useCallback((termId: string) => {
+        setTerms(prev => prev.filter(term => term.id !== termId));
+    }, []);
 
-    const updateField = (termId: string, field: keyof Omit<TermData, 'id' | 'referensi'>, value: string) => {
-        setTerms(terms.map(term =>
-            term.id === termId
-                ? { ...term, [field]: value }
-                : term
-        ));
-    };
+    const updateTerm = useCallback((termId: string, updatedFields: Partial<TermData>) => {
+        setTerms(prev => prev.map(term => term.id === termId ? { ...term, ...updatedFields } : term));
+    }, []);
 
-    const addReference = (termId: string) => {
-        setTerms(terms.map(term =>
-            term.id === termId
-                ? { ...term, referensi: [...term.referensi, ''] }
-                : term
-        ));
-        // Focus will be handled in the component after re-render
-    };
+    const focusNextField = useCallback((currentTermId: string, currentField: string) => {
+        const fieldOrder = ['title', 'istilah', 'bahasa', 'kenapaAda', 'contoh', 'referensi'];
+        const currentIndex = fieldOrder.indexOf(currentField);
 
-    const updateReference = (termId: string, index: number, value: string) => {
-        setTerms(terms.map(term =>
-            term.id === termId
-                ? { ...term, referensi: term.referensi.map((ref, i) => i === index ? value : ref) }
-                : term
-        ));
-    };
+        if (currentIndex < fieldOrder.length - 1) {
+            const nextField = fieldOrder[currentIndex + 1];
+            let nextInput: HTMLElement | null = null;
 
-    const removeReference = (termId: string, index: number) => {
-        setTerms(terms.map(term =>
-            term.id === termId && term.referensi.length > 1
-                ? { ...term, referensi: term.referensi.filter((_, i) => i !== index) }
-                : term
-        ));
-    };
-
-    const toggleFieldEdit = (fieldId: string) => {
-        setEditingFields(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(fieldId)) {
-                newSet.delete(fieldId);
+            if (nextField === 'referensi') {
+                // Untuk referensi, cari referensi pertama (index 0)
+                nextInput = document.querySelector(`[data-term-id="${currentTermId}"] [data-field-id="field-referensi-0"]`) as HTMLElement;
             } else {
-                newSet.add(fieldId);
+                nextInput = document.querySelector(`[data-term-id="${currentTermId}"] [data-field-id="field-${nextField}"]`) as HTMLElement;
             }
-            return newSet;
-        });
-    };
 
-
-    const moveToNextField = (currentTermId: string, currentFieldName: string) => {
-        const currentTerm = terms.find(term => term.id === currentTermId);
-        if (!currentTerm) return;
-
-        // Define field order for navigation
-        const fieldOrder = ['title', 'istilah', 'bahasa', 'kenapaAda', 'contoh'];
-
-        // Find current field index
-        const currentIndex = fieldOrder.indexOf(currentFieldName);
-        if (currentIndex === -1) return;
-
-        // Find next field that should be edited (either has value or needs editing)
-        for (let i = currentIndex + 1; i < fieldOrder.length; i++) {
-            const nextFieldName = fieldOrder[i];
-            const fieldValue = currentTerm[nextFieldName as keyof TermData] as string;
-            const fieldId = `${currentTermId}-${nextFieldName}`;
-            const isEditing = editingFields.has(fieldId);
-            const hasValue = fieldValue.trim() !== '';
-
-            if (!isEditing && !hasValue) {
-                // Start editing this empty field
-                setEditingFields(prev => new Set(prev).add(fieldId));
-
-                // Focus the field after state update
-                setTimeout(() => {
-                    const termElement = document.querySelector(`[data-term-id="${currentTermId}"]`);
-                    if (termElement) {
-                        const fieldElement = termElement.querySelector(`[data-field-id="${fieldId}"]`) as HTMLInputElement | HTMLTextAreaElement;
-                        if (fieldElement) {
-                            fieldElement.focus();
-                            // Set cursor to end if it's a text input
-                            if (fieldElement.type === 'text' && fieldElement.setSelectionRange) {
-                                fieldElement.setSelectionRange(fieldValue.length, fieldValue.length);
-                            }
-                        }
-                    }
-                }, 0);
-                return;
-            } else if (isEditing || hasValue) {
-                // Focus existing field
-                setTimeout(() => {
-                    const termElement = document.querySelector(`[data-term-id="${currentTermId}"]`);
-                    if (termElement) {
-                        const fieldElement = termElement.querySelector(`[data-field-id="${fieldId}"]`) as HTMLInputElement | HTMLTextAreaElement;
-                        if (fieldElement) {
-                            fieldElement.focus();
-                            // Set cursor to end of text
-                            if (fieldElement.setSelectionRange) {
-                                const value = fieldElement.value;
-                                fieldElement.setSelectionRange(value.length, value.length);
-                            }
-                        }
-                    }
-                }, 0);
-                return;
-            }
+            nextInput?.click();
         }
+    }, []);
 
-        // If no more fields to edit, check references
-        const currentTermRefs = currentTerm.referensi;
-        const hasEmptyRef = currentTermRefs.some(ref => ref.trim() === '');
-        if (hasEmptyRef || currentTermRefs.length === 0) {
-            // Add new reference if needed
-            if (currentTermRefs.length === 0 || currentTermRefs[currentTermRefs.length - 1].trim() !== '') {
-                addReference(currentTermId);
-            }
-            // Focus the last reference input
-            setTimeout(() => {
-                const termElement = document.querySelector(`[data-term-id="${currentTermId}"]`);
-                if (termElement) {
-                    const refInputs = termElement.querySelectorAll(`input[type="url"]`);
-                    const lastRefInput = refInputs[refInputs.length - 1] as HTMLInputElement;
-                    if (lastRefInput) {
-                        lastRefInput.focus();
-                        const value = lastRefInput.value;
-                        lastRefInput.setSelectionRange(value.length, value.length);
-                    }
-                }
-            }, 0);
-        }
-    }; const renderEditableField = (
-        termId: string,
-        fieldName: keyof Omit<TermData, 'id' | 'referensi'>,
-        value: string,
-        placeholder: string,
-        isTextarea: boolean = false,
-        rows: number = 3,
-        additionalProps?: any,
-        supportsMarkdown: boolean = false
-    ) => {
-        const fieldId = `${termId}-${fieldName}`;
-        const isEditing = editingFields.has(fieldId);
-        const hasValue = value.trim() !== '';
-
-        if (isEditing || (!hasValue && fieldName === 'title')) {
-            const { className: additionalClassName, ...otherAdditionalProps } = additionalProps || {};
-            const commonProps = {
-                value,
-                onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-                    updateField(termId, fieldName, e.target.value),
-                onBlur: () => toggleFieldEdit(fieldId),
-                onKeyDown: (e: React.KeyboardEvent) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        if (isTextarea && supportsMarkdown) {
-                            // For markdown textareas, Enter moves to next field, Shift+Enter creates new line
-                            e.preventDefault();
-                            moveToNextField(termId, fieldName);
-                        } else if (!isTextarea) {
-                            // For inputs, Enter moves to next field
-                            e.preventDefault();
-                            moveToNextField(termId, fieldName);
-                        }
-                    } else if (e.key === 'Escape') {
-                        toggleFieldEdit(fieldId);
-                    }
-                },
-                placeholder,
-                className: `w-full px-3 py-2 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-none shadow-sm hover:shadow-md transition-shadow ${additionalClassName || ''}`,
-                autoFocus: true,
-                ...otherAdditionalProps
-            };
-
-            if (supportsMarkdown) {
-                const markdownProps = {
-                    value,
-                    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        updateField(termId, fieldName, e.target.value),
-                    onBlur: () => toggleFieldEdit(fieldId),
-                    onKeyDown: (e: React.KeyboardEvent) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            // For markdown textareas, Enter moves to next field
-                            e.preventDefault();
-                            moveToNextField(termId, fieldName);
-                        } else if (e.key === 'Escape') {
-                            toggleFieldEdit(fieldId);
-                        }
-                        // Shift+Enter will create new line (default behavior)
-                    },
-                    className: `w-full px-3 py-2 bg-transparent border-2 border-[var(--border-primary)] rounded-lg text-transparent caret-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-none shadow-sm hover:shadow-md transition-shadow ${additionalClassName || ''}`,
-                    style: {
-                        position: 'relative',
-                        zIndex: 2,
-                        background: 'transparent',
-                        color: 'transparent',
-                        caretColor: 'var(--text-primary)',
-                        fontFamily: 'inherit',
-                        fontSize: 'inherit',
-                        lineHeight: 'inherit'
-                    },
-                    autoFocus: true,
-                    rows,
-                    ...otherAdditionalProps
-                };
-
-                return (
-                    <div className="relative">
-                        {/* Hidden textarea for actual input */}
-                        <textarea {...markdownProps} data-field-id={fieldId} />
-                        {/* Formatted preview overlay */}
-                        <div
-                            className="absolute inset-0 px-3 py-2 pointer-events-none text-[var(--text-primary)] leading-relaxed overflow-hidden"
-                            style={{
-                                zIndex: 1,
-                                whiteSpace: 'pre-wrap',
-                                wordWrap: 'break-word'
-                            }}
-                        >
-                            {value.trim() ? (
-                                <ReactMarkdown
-                                    components={{
-                                        p: ({ children }) => <p className="mb-1 text-[var(--text-primary)]">{children}</p>,
-                                        strong: ({ children }) => <strong className="font-bold text-[var(--text-primary)]">{children}</strong>,
-                                        em: ({ children }) => <em className="italic text-[var(--text-primary)]">{children}</em>,
-                                        code: ({ children }) => <code className="bg-gray-700 px-1 py-0.5 rounded text-green-400 font-mono text-sm">{children}</code>,
-                                        pre: ({ children }) => <pre className="bg-gray-800 p-2 rounded text-green-400 font-mono text-sm overflow-x-auto my-1 whitespace-pre-wrap">{children}</pre>,
-                                        h1: ({ children }) => <h1 className="text-lg font-bold text-[var(--text-primary)] mb-1">{children}</h1>,
-                                        h2: ({ children }) => <h2 className="text-base font-bold text-[var(--text-primary)] mb-1">{children}</h2>,
-                                        h3: ({ children }) => <h3 className="text-sm font-bold text-[var(--text-primary)] mb-1">{children}</h3>,
-                                        ul: ({ children }) => <ul className="list-disc list-inside mb-1 text-[var(--text-primary)]">{children}</ul>,
-                                        ol: ({ children }) => <ol className="list-decimal list-inside mb-1 text-[var(--text-primary)]">{children}</ol>,
-                                        li: ({ children }) => <li className="text-[var(--text-primary)]">{children}</li>,
-                                        a: ({ children, href }) => <a href={href} className="text-sky-600 hover:text-sky-700 underline" target="_blank" rel="noopener noreferrer">{children}</a>,
-                                        blockquote: ({ children }) => <blockquote className="border-l-2 border-gray-500 pl-2 italic text-[var(--text-secondary)] my-1">{children}</blockquote>
-                                    }}
-                                >
-                                    {value}
-                                </ReactMarkdown>
-                            ) : (
-                                <span className="text-[var(--text-secondary)]">{placeholder}</span>
-                            )}
-                        </div>
-                    </div>
-                );
-            } else {
-                return isTextarea ? (
-                    <textarea {...commonProps} rows={rows} data-field-id={fieldId} />
-                ) : (
-                    <input {...commonProps} type="text" data-field-id={fieldId} />
-                );
-            }
-        } else {
-            return (
-                <div
-                    className="group cursor-pointer p-2 -m-2 rounded transition-colors"
-                    onClick={() => toggleFieldEdit(fieldId)}
-                    data-field-id={fieldId}
-                >
-                    <div className="flex items-center justify-between">
-                        <div className="text-[var(--text-primary)] whitespace-pre-wrap group-hover:text-sky-600 transition-colors flex-1">
-                            {supportsMarkdown ? (
-                                <div className="text-[var(--text-primary)] leading-relaxed">
-                                    <ReactMarkdown
-                                        components={{
-                                            p: ({ children }) => <p className="mb-2 text-[var(--text-primary)]">{children}</p>,
-                                            strong: ({ children }) => <strong className="font-bold text-[var(--text-primary)]">{children}</strong>,
-                                            em: ({ children }) => <em className="italic text-[var(--text-primary)]">{children}</em>,
-                                            code: ({ children }) => <code className="bg-gray-700 px-1 py-0.5 rounded text-green-400 font-mono text-sm">{children}</code>,
-                                            pre: ({ children }) => <pre className="bg-gray-800 p-3 rounded text-green-400 font-mono text-sm overflow-x-auto my-2">{children}</pre>,
-                                            h1: ({ children }) => <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">{children}</h1>,
-                                            h2: ({ children }) => <h2 className="text-lg font-bold text-[var(--text-primary)] mb-2">{children}</h2>,
-                                            h3: ({ children }) => <h3 className="text-base font-bold text-[var(--text-primary)] mb-2">{children}</h3>,
-                                            ul: ({ children }) => <ul className="list-disc list-inside mb-2 text-[var(--text-primary)]">{children}</ul>,
-                                            ol: ({ children }) => <ol className="list-decimal list-inside mb-2 text-[var(--text-primary)]">{children}</ol>,
-                                            li: ({ children }) => <li className="text-[var(--text-primary)]">{children}</li>,
-                                            a: ({ children, href }) => <a href={href} className="text-sky-600 hover:text-sky-700 underline" target="_blank" rel="noopener noreferrer">{children}</a>,
-                                            blockquote: ({ children }) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-[var(--text-secondary)] my-2">{children}</blockquote>
-                                        }}
-                                    >
-                                        {value}
-                                    </ReactMarkdown>
-                                </div>
-                            ) : (
-                                value || <span className="text-[var(--text-secondary)]">{placeholder}</span>
-                            )}
-                        </div>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                toggleFieldEdit(fieldId);
-                            }}
-                            className="opacity-0 group-hover:opacity-100 px-2 py-1 text-sky-600 hover:bg-sky-50 rounded transition-all ml-2"
-                            title="Edit"
-                        >
-                            ✏️
-                        </button>
-                    </div>
-                </div>
-            );
-        }
-    };
 
     const exportData = () => {
-        const exportData = {
+        const dataToExport = {
             notes: notes.trim() || undefined,
-            terms: terms.map(term => ({
-                title: term.title || `Istilah ${terms.indexOf(term) + 1}`,
-                definitions: {
-                    title: term.title,
-                    istilah: term.istilah,
-                    bahasa: term.bahasa,
-                    kenapaAda: term.kenapaAda,
-                    contoh: term.contoh,
-                    referensi: term.referensi.filter(ref => ref.trim() !== '')
-                }
+            terms: terms.map(({ id, ...termData }) => ({
+                ...termData,
+                referensi: termData.referensi.filter(ref => ref.trim() !== ''),
             }))
         };
-
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'bulk-data-export.json';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const dataStr = JSON.stringify(dataToExport, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'bulk-data.json';
+        a.click();
         URL.revokeObjectURL(url);
     };
 
     const importData = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedData = JSON.parse(e.target?.result as string);
+        if (!file) return;
 
-                    // Handle both old format (array) and new format (object with notes and terms)
-                    let termsData = [];
-                    let notesData = '';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const imported = JSON.parse(e.target?.result as string);
+                const importedTerms = imported.terms || (Array.isArray(imported) ? imported : []);
 
-                    if (Array.isArray(importedData)) {
-                        // Old format: array of terms
-                        termsData = importedData;
-                    } else if (importedData && typeof importedData === 'object') {
-                        // New format: { notes?, terms: [] }
-                        notesData = importedData.notes || '';
-                        termsData = importedData.terms || [];
-                    }
-
-                    if (Array.isArray(termsData)) {
-                        const newTerms: TermData[] = termsData.map((item, index) => ({
-                            id: `term-${index + 1}`,
-                            title: item.title || '',
-                            istilah: item.definitions?.istilah || '',
-                            bahasa: item.definitions?.bahasa || '',
-                            kenapaAda: item.definitions?.kenapaAda || '',
-                            contoh: item.definitions?.contoh || '',
-                            referensi: Array.isArray(item.definitions?.referensi) ? item.definitions.referensi : ['']
-                        }));
-                        setTerms(newTerms);
-                        setNotes(notesData);
-                    }
-                } catch (error) {
-                    alert('Error importing data. Please check the file format.');
+                if (Array.isArray(importedTerms)) {
+                    const newTerms: TermData[] = importedTerms.map((item, index) => ({
+                        id: `term-${Date.now()}-${index}`,
+                        title: item.title || '',
+                        istilah: item.definitions?.istilah || item.istilah || '',
+                        bahasa: item.definitions?.bahasa || item.bahasa || '',
+                        kenapaAda: item.definitions?.kenapaAda || item.kenapaAda || '',
+                        contoh: item.definitions?.contoh || item.contoh || '',
+                        referensi: item.definitions?.referensi || item.referensi || [''],
+                    }));
+                    setTerms(newTerms.length > 0 ? newTerms : terms);
+                    setNotes(imported.notes || '');
                 }
-            };
-            reader.readAsText(file);
-        }
+            } catch (error) {
+                alert('Gagal mengimpor data. Format file tidak valid.');
+            }
+        };
+        reader.readAsText(file);
     };
 
     return (
         <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
             <div className="container mx-auto p-6">
                 <div className="mb-8 flex items-center justify-between">
-                    {onBack && (
-                        <button
-                            onClick={onBack}
-                            className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-2"
-                        >
-                            ← Kembali ke Glosarium
-                        </button>
-                    )}
+                    {onBack && <button onClick={onBack} className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-500">← Kembali</button>}
                     <div className="flex-1 text-center">
-                        <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Bulk Data Editor</h1>
-                        <p className="text-[var(--text-secondary)]">Isi data istilah secara massal dalam format tabel</p>
+                        <h1 className="text-3xl font-bold">Bulk Data Editor</h1>
+                        <p className="text-[var(--text-secondary)]">Isi data istilah secara massal</p>
                     </div>
-                    <div className="w-32"></div> {/* Spacer untuk balance layout */}
+                    <div className="w-32"></div>
                 </div>
 
                 <div className="mb-6 flex gap-4">
-                    <button
-                        onClick={exportData}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition-colors"
-                    >
-                        <ArrowDownTrayIcon className="w-4 h-4" />
-                        Export
+                    <button onClick={exportData} className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500">
+                        <ArrowDownTrayIcon className="w-4 h-4" /> Export
                     </button>
-
-                    <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors cursor-pointer">
-                        <ArrowUpTrayIcon className="w-4 h-4" />
-                        Import
-                        <input
-                            type="file"
-                            accept=".json"
-                            onChange={importData}
-                            className="hidden"
-                        />
+                    <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 cursor-pointer">
+                        <ArrowUpTrayIcon className="w-4 h-4" /> Import
+                        <input type="file" accept=".json" onChange={importData} className="hidden" />
                     </label>
                 </div>
 
-                {/* Notes Section */}
                 <div className="mb-8 bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-primary)] p-6">
-                    <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-4">Catatan</h2>
-                    <div className="relative">
-                        {editingFields.has('notes') || !notes.trim() ? (
-                            <textarea
-                                value={notes}
-                                onChange={(e) => setNotes(e.target.value)}
-                                onBlur={() => toggleFieldEdit('notes')}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Escape') {
-                                        toggleFieldEdit('notes');
-                                    }
-                                }}
-                                placeholder="Tulis catatan Anda di sini... (opsional)"
-                                className="w-full px-4 py-3 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 resize-vertical shadow-sm hover:shadow-md transition-shadow min-h-[120px]"
-                                autoFocus
-                            />
-                        ) : (
-                            <div
-                                className="group cursor-pointer p-4 -m-4 rounded transition-colors min-h-[120px] whitespace-pre-wrap"
-                                onClick={() => toggleFieldEdit('notes')}
-                            >
-                                <div className="flex items-start justify-between">
-                                    <div className="text-[var(--text-primary)] flex-1">
-                                        {notes}
-                                    </div>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleFieldEdit('notes');
-                                        }}
-                                        className="opacity-0 group-hover:opacity-100 px-2 py-1 text-sky-600 hover:bg-sky-50 rounded transition-all ml-2 flex-shrink-0"
-                                        title="Edit catatan"
-                                    >
-                                        ✏️
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                    <h2 className="text-lg font-semibold mb-4">Catatan</h2>
+                    <EditableField
+                        value={notes}
+                        onChange={setNotes}
+                        placeholder="Tulis catatan Anda di sini... (opsional)"
+                        isTextarea
+                        rows={5}
+                        fieldName="notes"
+                    />
                 </div>
 
-                {/* Tables */}
                 <div className="space-y-8 pb-8">
-                    {terms.map((term, termIndex) => (
-                        <div key={term.id} className="bg-[var(--bg-secondary)] rounded-lg border border-[var(--border-primary)] overflow-hidden" data-term-id={term.id}>
-                            {/* Table Content */}
-                            <div className="p-6">
-                                <table className="w-full border-collapse">
-                                    <tbody>
-                                        {/* Term Title Row - Centered */}
-                                        <tr className="border-b-2 border-[var(--border-primary)] bg-[var(--bg-tertiary)]/50">
-                                            <td colSpan={2} className="px-4 py-6 text-center">
-                                                {editingFields.has(`${term.id}-title`) || !term.title.trim() ? (
-                                                    <input
-                                                        type="text"
-                                                        value={term.title}
-                                                        onChange={(e) => updateField(term.id, 'title', e.target.value)}
-                                                        onBlur={() => toggleFieldEdit(`${term.id}-title`)}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === 'Enter' && !e.shiftKey) {
-                                                                // For title input, Enter moves to next field
-                                                                e.preventDefault();
-                                                                moveToNextField(term.id, 'title');
-                                                            } else if (e.key === 'Escape') {
-                                                                toggleFieldEdit(`${term.id}-title`);
-                                                            }
-                                                        }}
-                                                        placeholder="Masukkan nama istilah..."
-                                                        className="px-4 py-3 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 shadow-sm hover:shadow-md transition-shadow font-bold text-xl text-center min-w-[400px]"
-                                                        autoFocus
-                                                        data-field-id={`${term.id}-title`}
-                                                    />
-                                                ) : (
-                                                    <div className="flex items-center justify-center gap-3" data-field-id={`${term.id}-title`}>
-                                                        <h2
-                                                            className="text-2xl font-bold text-[var(--text-primary)] cursor-pointer hover:text-sky-600 transition-colors"
-                                                            onClick={() => toggleFieldEdit(`${term.id}-title`)}
-                                                        >
-                                                            {term.title}
-                                                        </h2>
-                                                        <button
-                                                            onClick={() => toggleFieldEdit(`${term.id}-title`)}
-                                                            className="px-2 py-1 text-sky-600 hover:bg-sky-50 rounded transition-colors opacity-0 group-hover:opacity-100"
-                                                            title="Edit nama istilah"
-                                                        >
-                                                            ✏️
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </td>
-                                        </tr>
-
-                                        {/* Definition Row */}
-                                        <tr className="border-b border-[var(--border-primary)]">
-                                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] w-48 align-top">
-                                                Definisi
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {renderEditableField(
-                                                    term.id,
-                                                    'istilah',
-                                                    term.istilah,
-                                                    'Masukkan definisi...',
-                                                    true,
-                                                    4,
-                                                    undefined,
-                                                    true
-                                                )}
-                                            </td>
-                                        </tr>
-
-                                        {/* Language Meaning Row */}
-                                        <tr className="border-b border-[var(--border-primary)]">
-                                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] align-top">
-                                                Arti Bahasa
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {renderEditableField(
-                                                    term.id,
-                                                    'bahasa',
-                                                    term.bahasa,
-                                                    'Masukkan arti bahasa...',
-                                                    false,
-                                                    1,
-                                                    undefined,
-                                                    true
-                                                )}
-                                            </td>
-                                        </tr>
-
-                                        {/* Reason Row */}
-                                        <tr className="border-b border-[var(--border-primary)]">
-                                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] align-top">
-                                                Alasan Keberadaan
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {renderEditableField(
-                                                    term.id,
-                                                    'kenapaAda',
-                                                    term.kenapaAda,
-                                                    'Masukkan alasan keberadaan...',
-                                                    true,
-                                                    3,
-                                                    undefined,
-                                                    true
-                                                )}
-                                            </td>
-                                        </tr>
-
-                                        {/* Example Row */}
-                                        <tr className="border-b border-[var(--border-primary)]">
-                                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] align-top">
-                                                <div className="flex items-center gap-2">
-                                                    Contoh
-                                                </div>
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                {renderEditableField(
-                                                    term.id,
-                                                    'contoh',
-                                                    term.contoh,
-                                                    'Masukkan contoh...',
-                                                    true,
-                                                    3,
-                                                    undefined,
-                                                    true
-                                                )}
-                                            </td>
-                                        </tr>
-
-                                        {/* References Row */}
-                                        <tr>
-                                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] align-top">
-                                                Referensi
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <div className="space-y-3">
-                                                    {term.referensi.map((ref, refIndex) => (
-                                                        <div key={refIndex} className="flex items-center gap-2">
-                                                            <input
-                                                                type="url"
-                                                                value={ref}
-                                                                onChange={(e) => {
-                                                                    const newValue = e.target.value;
-                                                                    const otherNonEmptyRefs = term.referensi.filter((ref, i) => i !== refIndex && ref.trim() !== '').length;
-                                                                    if (newValue.trim() === '' && otherNonEmptyRefs > 0) {
-                                                                        // Remove empty reference if there are other non-empty references
-                                                                        removeReference(term.id, refIndex);
-                                                                    } else {
-                                                                        updateReference(term.id, refIndex, newValue);
-                                                                    }
-                                                                }}
-                                                                onKeyDown={(e) => {
-                                                                    if (e.key === 'Enter') {
-                                                                        addReference(term.id);
-                                                                        // Focus on the new reference input after DOM update
-                                                                        setTimeout(() => {
-                                                                            const termElement = document.querySelector(`[data-term-id="${term.id}"]`);
-                                                                            if (termElement) {
-                                                                                const inputs = termElement.querySelectorAll(`input[type="url"][placeholder="https://..."]`);
-                                                                                const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
-                                                                                if (lastInput) {
-                                                                                    lastInput.focus();
-                                                                                }
-                                                                            }
-                                                                        }, 0);
-                                                                    }
-                                                                }}
-                                                                placeholder="https://..."
-                                                                className="flex-1 px-3 py-2 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 text-sm shadow-sm hover:shadow-md transition-shadow"
-                                                                data-field-id={`${term.id}-referensi-${refIndex}`}
-                                                            />
-                                                            {term.referensi.length > 1 && (
-                                                                <button
-                                                                    onClick={() => removeReference(term.id, refIndex)}
-                                                                    className="px-2 py-2 text-red-500 hover:bg-red-500/10 rounded transition-colors"
-                                                                    title="Hapus referensi"
-                                                                >
-                                                                    <TrashIcon className="w-4 h-4" />
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        {/* Add Reference Row */}
-                                        <tr>
-                                            <td className="px-4 py-3 font-semibold text-[var(--text-primary)] align-top">
-                                                Tambah Referensi
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <button
-                                                    onClick={() => addReference(term.id)}
-                                                    className="w-full px-3 py-2 text-sky-600 hover:bg-sky-50 border-2 border-dashed border-sky-300 rounded-lg hover:border-sky-500 transition-colors text-sm font-medium"
-                                                >
-                                                    + Tambah Referensi
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                {/* Delete Term Button */}
-                                {terms.length > 1 && (
-                                    <div className="mt-4 flex justify-end">
-                                        <button
-                                            onClick={() => removeTerm(term.id)}
-                                            className="px-4 py-2 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2 border border-red-200"
-                                            title="Hapus istilah"
-                                        >
-                                            <TrashIcon className="w-4 h-4" />
-                                            Hapus Istilah
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                    {terms.map((term) => (
+                        <TermItem
+                            key={term.id}
+                            term={term}
+                            onUpdate={updateTerm}
+                            onRemove={removeTerm}
+                            isDeletable={terms.length > 1}
+                            focusNextField={focusNextField}
+                        />
                     ))}
                 </div>
 
                 <div className="mt-8 flex justify-center">
-                    <button
-                        onClick={addTerm}
-                        className="flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-500 transition-colors text-lg font-medium"
-                    >
-                        <PlusIcon className="w-5 h-5" />
-                        Tambah Istilah
+                    <button onClick={addTerm} className="flex items-center gap-2 px-6 py-3 bg-sky-600 text-white rounded-lg hover:bg-sky-500 text-lg font-medium">
+                        <PlusIcon className="w-5 h-5" /> Tambah Istilah
                     </button>
-                </div>
-
-                <div className="mt-8 text-center text-[var(--text-secondary)]">
-                    <p>Tip: Anda dapat menyalin data dari spreadsheet dan menempelkannya langsung ke kolom yang sesuai</p>
                 </div>
             </div>
         </div>
