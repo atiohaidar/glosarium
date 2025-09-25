@@ -101,14 +101,14 @@ export const DataManagement: React.FC<DataManagementProps> = ({
 
       {categories.length > 0 && (
         <div className="space-y-2 max-h-60 overflow-y-auto">
-          {categories.map(category => (
+          {categories.filter(category => category && category.id).map(category => (
             <div key={category.id} className="flex items-center justify-between bg-[var(--bg-secondary)] p-3 rounded-lg">
               {editingCategory?.id === category.id ? (
                 <div className="flex-1 flex gap-2">
                   <input
                     type="text"
-                    value={editingCategory.name}
-                    onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                    value={editingCategory?.name || ''}
+                    onChange={(e) => setEditingCategory(editingCategory ? { ...editingCategory, name: e.target.value } : null)}
                     className="flex-1 bg-[var(--bg-tertiary)] border border-[var(--border-primary)] rounded p-1 text-[var(--text-primary)]"
                   />
                   <button
@@ -174,7 +174,7 @@ export const DataManagement: React.FC<DataManagementProps> = ({
               className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-2 text-[var(--text-primary)]"
             >
               <option value="">Pilih kategori</option>
-              {categories.map(cat => (
+              {categories.filter(cat => cat && cat.id).map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
@@ -405,11 +405,10 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key as 'categories' | 'terms' | 'import-export')}
-                className={`px-4 py-2 font-medium transition-colors ${
-                  activeTab === tab.key
-                    ? 'text-purple-400 border-b-2 border-purple-400'
-                    : 'text-[var(--text-secondary)] hover:text-white'
-                }`}
+                className={`px-4 py-2 font-medium transition-colors ${activeTab === tab.key
+                  ? 'text-purple-400 border-b-2 border-purple-400'
+                  : 'text-[var(--text-secondary)] hover:text-white'
+                  }`}
               >
                 {tab.label}
               </button>
@@ -438,6 +437,11 @@ Deep Learning | Subset ML dengan neural networks | Pembelajaran Mendalam | Untuk
                 setEditingTerm(null);
               }}
               onCancel={() => setEditingTerm(null)}
+              onSave={(categoryId, term) => {
+                // If you want to update the term, you may need to call onUpdateTerm here,
+                // but since term does not have an id, you should handle add or update logic accordingly.
+                setEditingTerm(null);
+              }}
             />
           </div>
         </Modal>

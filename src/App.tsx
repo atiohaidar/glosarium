@@ -79,8 +79,8 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, selectedCategoryId, onSel
                             key={cat.id}
                             onClick={() => onSelectCategory(cat.id)}
                             className={`px-4 py-2 text-left rounded-md w-full whitespace-nowrap transition-all duration-200 text-sm md:text-base ${selectedCategoryId === cat.id
-                                    ? 'bg-sky-500/80 text-white font-semibold shadow-md shadow-sky-500/30'
-                                    : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] hover:text-white'
+                                ? 'bg-sky-500/80 text-white font-semibold shadow-md shadow-sky-500/30'
+                                : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] hover:text-white'
                                 }`}
                         >
                             {cat.name}
@@ -285,7 +285,7 @@ const App: React.FC = () => {
     }
 
     if (isBulkEditorMode) {
-        return <BulkDataEditor onBack={() => setIsBulkEditorMode(false)} />;
+        return <BulkDataEditor onBack={() => setIsBulkEditorMode(false)} onImportData={importData} existingData={exportData()} />;
     }
 
     return (
@@ -296,7 +296,7 @@ const App: React.FC = () => {
                 onSelectCategory={setSelectedCategoryId}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
-                onImportData={importData}
+                _onImportData={importData}
             />
             <div className="flex-1 flex flex-col bg-[var(--bg-primary)] md:border-l border-[var(--border-primary)]/30 overflow-hidden">
                 <header className="p-4 md:p-6 border-b border-[var(--border-primary)]/30 flex items-center gap-2 md:gap-4 flex-wrap">
@@ -417,6 +417,13 @@ const App: React.FC = () => {
                             categories={categories}
                             selectedCategoryId={selectedCategoryId}
                             editingTerm={editingTerm}
+                            onSave={(categoryId, term) => {
+                                // If editingTerm exists, update the term
+                                if (editingTerm) {
+                                    updateTerm(categoryId, editingTerm.id, term);
+                                }
+                                setEditingTerm(null);
+                            }}
                             onUpdate={(categoryId, termId, updates) => {
                                 updateTerm(categoryId, termId, updates);
                                 setEditingTerm(null);
@@ -470,14 +477,11 @@ const App: React.FC = () => {
                 onAddCategory={addCategory}
                 onUpdateCategory={updateCategory}
                 onDeleteCategory={deleteCategory}
-                onAddTerm={addTerm}
                 onUpdateTerm={updateTerm}
                 onDeleteTerm={deleteTerm}
-                onBulkAddTerms={bulkAddTerms}
                 onExportData={exportData}
                 onImportData={importData}
                 onResetToDefault={resetToDefault}
-                onClearLocalData={clearLocalData}
             />
         </div>
     );

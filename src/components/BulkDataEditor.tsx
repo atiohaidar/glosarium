@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
-// Pastikan path icon benar. Jika tidak ada, Anda bisa menggantinya dengan emoji atau teks.
-// import { PlusIcon, TrashIcon, ArrowDownTrayIcon, ArrowUpTrayIcon } from './icons'; 
+import { Category } from '../types';
 
 // Placeholder Icons jika file tidak ada
 const PlusIcon = ({ className }) => <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>;
@@ -203,7 +202,7 @@ const TermItem: React.FC<TermItemProps> = React.memo(({ term, onUpdate, onRemove
                                     <EditableField
                                         value={term[field as keyof TermData] as string}
                                         placeholder={`Masukkan ${field}...`}
-                                        onChange={(value) => handleFieldUpdate(field as keyof TermData, value)}
+                                        onChange={(value) => handleFieldUpdate(field as keyof Omit<TermData, 'id'>, value)}
                                         onCommit={() => focusNextField(term.id, field)}
                                         isTextarea={['istilah', 'kenapaAda', 'contoh'].includes(field)}
                                         rows={2} // Nilai rows kini berfungsi sebagai tinggi minimal
@@ -256,12 +255,33 @@ const TermItem: React.FC<TermItemProps> = React.memo(({ term, onUpdate, onRemove
 // Tidak ada perubahan signifikan di sini
 interface BulkDataEditorProps {
     onBack?: () => void;
+    onImportData?: (jsonString: string) => boolean;
+    existingData?: string;
 }
 
-const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
+const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack, onImportData, existingData }) => {
     const [terms, setTerms] = useState<TermData[]>([]);
     const [notes, setNotes] = useState<string>('');
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [newCategoryName, setNewCategoryName] = useState<string>('');
     const hasLoadedRef = useRef(false);
+
+    // Load categories from existing data instead of fetching
+    useEffect(() => {
+        if (existingData) {
+            try {
+                const data = JSON.parse(existingData);
+                if (data.categories && Array.isArray(data.categories)) {
+                    setCategories(data.categories);
+                }
+            } catch (error) {
+                console.error('Failed to parse existing data for categories:', error);
+                setCategories([]);
+            }
+        }
+    }, [existingData]);
 
     // Load data from localStorage on mount
     useEffect(() => {
@@ -309,6 +329,108 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
     const updateTerm = useCallback((termId: string, updatedFields: Partial<TermData>) => {
         setTerms(prev => prev.map(term => term.id === termId ? { ...term, ...updatedFields } : term));
     }, []);
+
+    const uploadToGlosarium = () => {
+        if (!onImportData) {
+            alert('Fungsi import tidak tersedia. Silakan gunakan export manual.');
+            return;
+        }
+
+        let categoryName = '';
+        let categoryId = '';
+
+        if (selectedCategory === 'new') {
+            categoryName = newCategoryName.trim();
+            if (!categoryName) {
+                alert('Masukkan nama kategori baru.');
+                return;
+            }
+        } else {
+            // selectedCategory contains the category id
+            categoryId = selectedCategory;
+            const selectedCat = categories.find(cat => cat.id === categoryId);
+            if (!selectedCat) {
+                alert('Kategori yang dipilih tidak ditemukan.');
+                return;
+            }
+            categoryName = selectedCat.name;
+        }
+
+        // Convert terms to glosarium format
+        const glosariumTerms = terms.map(({ id, ...term }) => ({
+            title: term.title,
+            definitions: {
+                istilah: term.istilah,
+                bahasa: term.bahasa,
+                kenapaAda: term.kenapaAda,
+                contoh: term.contoh,
+                referensi: term.referensi.filter(ref => ref.trim() !== ''),
+            }
+        })).filter(term => term.title.trim() !== ''); // Filter terms with title
+
+        if (glosariumTerms.length === 0) {
+            alert('Tidak ada data istilah yang valid untuk di-upload.');
+            return;
+        }
+
+        // Get existing data and merge with new data
+        let existingGlossary = { categories: [] };
+        if (existingData) {
+            try {
+                existingGlossary = JSON.parse(existingData);
+            } catch (error) {
+                console.error('Error parsing existing data:', error);
+                existingGlossary = { categories: [] };
+            }
+        }
+
+        // Find or create the category
+        let targetCategory;
+        if (selectedCategory === 'new') {
+            // Create new category with unique id
+            const newId = `cat-${Date.now()}`;
+            targetCategory = { id: newId, name: categoryName, terms: [] };
+            existingGlossary.categories.push(targetCategory);
+        } else {
+            // Find existing category by id
+            targetCategory = existingGlossary.categories.find(cat => cat.id === categoryId);
+            if (!targetCategory) {
+                // If category doesn't exist in existing data, create it
+                targetCategory = { id: categoryId, name: categoryName, terms: [] };
+                existingGlossary.categories.push(targetCategory);
+            }
+        }
+
+        // Merge terms: update existing or add new
+        glosariumTerms.forEach(newTerm => {
+            const existingTermIndex = targetCategory.terms.findIndex(term => term.title === newTerm.title);
+            if (existingTermIndex >= 0) {
+                // Update existing term
+                targetCategory.terms[existingTermIndex] = newTerm;
+            } else {
+                // Add new term
+                targetCategory.terms.push(newTerm);
+            }
+        });
+
+        // Import merged data
+        const mergedDataStr = JSON.stringify(existingGlossary, null, 2);
+        const success = onImportData(mergedDataStr);
+
+        if (success) {
+            // Clear localStorage and reset state
+            localStorage.removeItem('bulk-data-editor-data');
+            setTerms([{ id: `term-${Date.now()}`, title: '', istilah: '', bahasa: '', kenapaAda: '', contoh: '', referensi: [''] }]);
+            setNotes('');
+            setShowUploadModal(false);
+            setSelectedCategory('');
+            setNewCategoryName('');
+
+            alert(`Data berhasil di-upload ke glosarium! ${glosariumTerms.length} istilah ${selectedCategory === 'new' ? 'ditambahkan ke kategori baru' : 'diupdate di kategori'} "${categoryName}".`);
+        } else {
+            alert('Gagal meng-upload data ke glosarium. Silakan coba lagi.');
+        }
+    };
 
     const clearAllData = () => {
         if (window.confirm('Apakah Anda yakin ingin menghapus semua data? Data yang belum di-export akan hilang.')) {
@@ -406,6 +528,9 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
                         <ArrowUpTrayIcon className="w-4 h-4" /> Import
                         <input type="file" accept=".json" onChange={importData} className="hidden" />
                     </label>
+                    <button onClick={() => setShowUploadModal(true)} className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500">
+                        <ArrowUpTrayIcon className="w-4 h-4" /> Upload to Glosarium
+                    </button>
                     <button onClick={clearAllData} className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500">
                         <TrashIcon className="w-4 h-4" /> Clear All Data
                     </button>
@@ -442,6 +567,61 @@ const BulkDataEditor: React.FC<BulkDataEditorProps> = ({ onBack }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Upload Modal */}
+            {showUploadModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-[var(--bg-secondary)] rounded-lg p-6 w-full max-w-md mx-4">
+                        <h3 className="text-lg font-semibold mb-4 text-[var(--text-primary)]">Upload ke Glosarium</h3>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                                    Pilih Kategori
+                                </label>
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="w-full px-3 py-2 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                                >
+                                    <option value="">Pilih kategori...</option>
+                                    {categories.filter(cat => cat && cat.id).map((cat) => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                    <option value="new">Buat kategori baru</option>
+                                </select>
+                            </div>
+                            {selectedCategory === 'new' && (
+                                <div>
+                                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                                        Nama Kategori Baru
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={newCategoryName}
+                                        onChange={(e) => setNewCategoryName(e.target.value)}
+                                        placeholder="Masukkan nama kategori..."
+                                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border-2 border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                            <button
+                                onClick={uploadToGlosarium}
+                                className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500"
+                            >
+                                Upload
+                            </button>
+                            <button
+                                onClick={() => setShowUploadModal(false)}
+                                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500"
+                            >
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
