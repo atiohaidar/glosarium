@@ -11,6 +11,7 @@ export interface Term {
   id: string;
   title: string;
   definitions: Definitions;
+  isUnderstood?: boolean;
 }
 
 export interface Category {

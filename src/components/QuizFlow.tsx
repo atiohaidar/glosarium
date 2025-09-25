@@ -74,15 +74,17 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
 interface QuizSetupProps {
   categories: Category[];
   sortedTermsByCategory: Map<string, Term[]>;
-  onSubmit: (config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random' }) => void;
+  onSubmit: (config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random'; understoodFilter: 'all' | 'understood' | 'not-understood' }) => void;
   onExit: () => void;
   selectedCategoryId?: string | null;
+  understoodFilter?: 'all' | 'understood' | 'not-understood';
 }
 
-const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory, onSubmit, onExit, selectedCategoryId }) => {
+const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory, onSubmit, onExit, selectedCategoryId, understoodFilter = 'all' }) => {
     const [categoryId, setCategoryId] = useState(selectedCategoryId || categories[0]?.id || '');
     const [numQuestions, setNumQuestions] = useState(5);
     const [questionKey, setQuestionKey] = useState<keyof Definitions | 'random'>('istilah');
+    const [quizUnderstoodFilter, setQuizUnderstoodFilter] = useState<'all' | 'understood' | 'not-understood'>(understoodFilter);
 
     const questionTypes: { key: keyof Definitions | 'random'; label: string }[] = [
         { key: 'istilah', label: 'Definisi (Istilah)' },
@@ -94,7 +96,15 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
 
     const maxQuestions = useMemo(() => {
         if (!categoryId) return 0;
-        const terms = sortedTermsByCategory.get(categoryId) || [];
+        let terms = sortedTermsByCategory.get(categoryId) || [];
+        
+        // Apply understood filter
+        if (quizUnderstoodFilter === 'understood') {
+            terms = terms.filter(term => term.isUnderstood);
+        } else if (quizUnderstoodFilter === 'not-understood') {
+            terms = terms.filter(term => !term.isUnderstood);
+        }
+        
         if (questionKey === 'random') {
             return terms.reduce((count, term) => {
                 return count + Object.values(term.definitions).filter(def => def && def !== '-').length;
@@ -104,7 +114,7 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
             const value = term.definitions[questionKey as keyof Definitions];
             return value && value !== '-';
         }).length;
-    }, [categoryId, questionKey, sortedTermsByCategory]);
+    }, [categoryId, questionKey, sortedTermsByCategory, quizUnderstoodFilter]);
 
     useEffect(() => {
         if (numQuestions > maxQuestions) {
@@ -119,7 +129,7 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (categoryId && numQuestions > 0) {
-            onSubmit({ categoryId, numQuestions, questionKey });
+            onSubmit({ categoryId, numQuestions, questionKey, understoodFilter: quizUnderstoodFilter });
         }
     };
 
@@ -140,6 +150,14 @@ const QuizSetup: React.FC<QuizSetupProps> = ({ categories, sortedTermsByCategory
                     <label htmlFor="questionType" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Tanyakan tentang...</label>
                     <select id="questionType" value={questionKey} onChange={(e) => setQuestionKey(e.target.value as keyof Definitions | 'random')} className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500" title="Pilih jenis informasi yang akan ditanyakan (definisi, arti, dll).">
                         {questionTypes.map(type => <option key={type.key} value={type.key}>{type.label}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="understoodFilter" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Scope Istilah</label>
+                    <select id="understoodFilter" value={quizUnderstoodFilter} onChange={(e) => setQuizUnderstoodFilter(e.target.value as 'all' | 'understood' | 'not-understood')} className="w-full bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg p-3 text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500" title="Pilih istilah mana yang akan diujikan.">
+                        <option value="all">Semua Istilah</option>
+                        <option value="not-understood">Belum Paham</option>
+                        <option value="understood">Sudah Paham</option>
                     </select>
                 </div>
                 <div>
@@ -366,9 +384,10 @@ interface QuizFlowProps {
     sortedTermsByCategory: Map<string, Term[]>;
     onExit: () => void;
     selectedCategoryId?: string | null;
+    understoodFilter?: 'all' | 'understood' | 'not-understood';
 }
 
-export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCategory, onExit, selectedCategoryId }) => {
+export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCategory, onExit, selectedCategoryId, understoodFilter = 'all' }) => {
     const [step, setStep] = useState<'setup' | 'active' | 'results'>('setup');
     const [questions, setQuestions] = useState<QuizQuestion[]>([]);
     const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
@@ -376,9 +395,16 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
     const [startTime, setStartTime] = useState<number | null>(null);
     const [endTime, setEndTime] = useState<number | null>(null);
 
-    const generateQuestions = useCallback((config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random' }) => {
+    const generateQuestions = useCallback((config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random' }, filterUnderstood: 'all' | 'understood' | 'not-understood' = 'all') => {
         const { categoryId, numQuestions, questionKey: quizType } = config;
-        const allTermsInCategory = sortedTermsByCategory.get(categoryId) || [];
+        let allTermsInCategory = sortedTermsByCategory.get(categoryId) || [];
+        
+        // Filter based on understood status
+        if (filterUnderstood === 'understood') {
+            allTermsInCategory = allTermsInCategory.filter(term => term.isUnderstood);
+        } else if (filterUnderstood === 'not-understood') {
+            allTermsInCategory = allTermsInCategory.filter(term => !term.isUnderstood);
+        }
         
         let eligibleQuestionPool: { term: Term; questionKey: keyof Definitions }[] = [];
 
@@ -432,8 +458,8 @@ export const QuizFlow: React.FC<QuizFlowProps> = ({ categories, sortedTermsByCat
         setQuestions(newQuestions);
     }, [sortedTermsByCategory]);
 
-    const handleSetupSubmit = (config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random' }) => {
-        generateQuestions(config);
+    const handleSetupSubmit = (config: { categoryId: string; numQuestions: number; questionKey: keyof Definitions | 'random'; understoodFilter: 'all' | 'understood' | 'not-understood' }) => {
+        generateQuestions(config, config.understoodFilter);
         setUserAnswers(new Array(config.numQuestions).fill(null));
         setStartTime(Date.now());
         setEndTime(null);

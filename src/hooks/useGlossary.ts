@@ -4,33 +4,88 @@ import { Category, Term, GlossaryData, Node, Link, GraphData } from '../types';
 // Helper function to sort terms based on dependencies within their definitions
 const sortTermsByDependency = (terms: Term[]): Term[] => {
   const termTitles = terms.map(t => t.title.toLowerCase());
+  const termMap = new Map(terms.map(t => [t.title.toLowerCase(), t]));
 
+  // Build dependency graph: A -> B means A depends on B (A membutuhkan B)
   const dependencyGraph = new Map<string, Set<string>>();
+  const reverseGraph = new Map<string, Set<string>>(); // B -> A means B is needed by A
 
+  // Initialize graphs
   terms.forEach(term => {
     const termKey = term.title.toLowerCase();
     dependencyGraph.set(termKey, new Set());
+    reverseGraph.set(termKey, new Set());
+  });
+
+  // Build the graphs
+  terms.forEach(term => {
+    const termKey = term.title.toLowerCase();
     const fullText = Object.values(term.definitions).join(' ').toLowerCase();
 
     termTitles.forEach(otherTitle => {
       if (termKey !== otherTitle) {
-        // Use word boundary regex to avoid partial matches (e.g., 'ai' in 'chain')
         const regex = new RegExp(`\\b${otherTitle}\\b`, 'g');
         if (regex.test(fullText)) {
-          dependencyGraph.get(termKey)?.add(otherTitle);
+          dependencyGraph.get(termKey)?.add(otherTitle); // A depends on B
+          reverseGraph.get(otherTitle)?.add(termKey);   // B is depended by A
         }
       }
     });
   });
 
-  return [...terms].sort((a, b) => {
-    const depsA = dependencyGraph.get(a.title.toLowerCase())?.size || 0;
-    const depsB = dependencyGraph.get(b.title.toLowerCase())?.size || 0;
-    if (depsA !== depsB) {
-      return depsA - depsB;
-    }
-    return a.title.localeCompare(b.title); // Alphabetical fallback
+  // Topological sort using Kahn's algorithm
+  const indegree = new Map<string, number>();
+  const queue: string[] = [];
+  const result: string[] = [];
+
+  // Calculate indegree (number of dependencies)
+  terms.forEach(term => {
+    const termKey = term.title.toLowerCase();
+    indegree.set(termKey, dependencyGraph.get(termKey)?.size || 0);
   });
+
+  // Start with terms that have no dependencies (indegree 0)
+  terms.forEach(term => {
+    const termKey = term.title.toLowerCase();
+    if ((indegree.get(termKey) || 0) === 0) {
+      queue.push(termKey);
+    }
+  });
+
+  // Process queue
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    result.push(current);
+
+    // For each term that depends on current term
+    const dependents = reverseGraph.get(current) || new Set();
+    dependents.forEach(dependent => {
+      const currentIndegree = (indegree.get(dependent) || 0) - 1;
+      indegree.set(dependent, currentIndegree);
+
+      // If no more dependencies, add to queue
+      if (currentIndegree === 0) {
+        queue.push(dependent);
+      }
+    });
+  }
+
+  // Handle remaining terms (circular dependencies or disconnected)
+  const remaining = termTitles.filter(title => !result.includes(title));
+  if (remaining.length > 0) {
+    // Sort remaining alphabetically and append
+    remaining.sort();
+    result.push(...remaining);
+  }
+
+  // Convert back to Term objects, maintaining the topological order
+  const sortedTerms: Term[] = [];
+  result.forEach(title => {
+    const term = termMap.get(title);
+    if (term) sortedTerms.push(term);
+  });
+
+  return sortedTerms;
 };
 
 export const useGlossary = () => {
@@ -236,17 +291,18 @@ export const useGlossary = () => {
     });
   }, []);
 
-  const bulkAddTerms = useCallback((categoryId: string, terms: Omit<Term, 'id'>[]) => {
-    const newTerms: Term[] = terms.map(term => ({
-      ...term,
-      id: `term-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    }));
+  const toggleTermUnderstood = useCallback((categoryId: string, termId: string) => {
     setData(prev => {
       const newData = {
         ...prev,
         categories: prev.categories.map(cat =>
           cat.id === categoryId
-            ? { ...cat, terms: [...cat.terms, ...newTerms] }
+            ? {
+                ...cat,
+                terms: cat.terms.map(term =>
+                  term.id === termId ? { ...term, isUnderstood: !term.isUnderstood } : term
+                )
+              }
             : cat
         )
       };
@@ -325,7 +381,7 @@ export const useGlossary = () => {
     addTerm,
     updateTerm,
     deleteTerm,
-    bulkAddTerms,
+    toggleTermUnderstood,
     // Import/Export functions
     exportData,
     importData,

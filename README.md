@@ -19,7 +19,7 @@
 ### 🎯 **Manajemen Istilah**
 - **Kategori Terorganisir**: Kelompokkan istilah berdasarkan kategori
 - **Definisi Lengkap**: Setiap istilah memiliki definisi, contoh, dan referensi
-- **Pencarian Cepat**: Temukan istilah dengan fitur search real-time
+- **Pencarian Pintar**: Temukan istilah dengan fitur search (tekan tombol atau Enter)
 - **Edit & Hapus**: Kelola istilah dengan mudah
 
 ### 📊 **Visualisasi Data**
@@ -35,6 +35,8 @@
 ### 🎨 **Pengalaman Pengguna**
 - **Dark/Light Mode**: Toggle tema sesuai preferensi
 - **Responsive Design**: Optimal di desktop dan mobile
+- **Sidebar Toggle**: Sidebar dapat di-toggle dengan animasi smooth
+- **Mobile Overlay**: Sidebar muncul sebagai overlay di mobile
 - **Smooth Animations**: Transisi yang halus dan modern
 - **Intuitive UI**: Antarmuka yang mudah digunakan
 
@@ -87,11 +89,13 @@ npm run preview
 
 ### 1. **Navigasi Kategori**
 - Gunakan sidebar untuk memilih kategori istilah
-- Klik tombol hamburger untuk toggle sidebar di mobile
+- Klik tombol hamburger untuk toggle sidebar di mobile/desktop
+- Sidebar memiliki animasi smooth saat buka-tutup
 
 ### 2. **Mencari Istilah**
 - Gunakan search box di header untuk mencari istilah
-- Pencarian real-time berdasarkan judul dan definisi
+- Pencarian dilakukan saat menekan tombol search atau Enter
+- Filter default menampilkan istilah yang "belum paham"
 
 ### 3. **Melihat Detail Istilah**
 - Klik pada term card untuk melihat detail lengkap
@@ -178,9 +182,10 @@ glosarium/
 ## 🎯 Fitur Detail
 
 ### **Smart Search**
-- Pencarian real-time tanpa delay
+- Pencarian manual dengan tombol atau Enter
 - Highlight hasil pencarian di graf
 - Filter berdasarkan judul dan konten definisi
+- Default filter menampilkan istilah "belum paham"
 
 ### **Interactive Graph**
 - Zoom dan pan untuk navigasi
@@ -284,7 +289,7 @@ Modifikasi `QuizFlow.tsx` untuk menambah tipe pertanyaan atau scoring logic.
 ---
 
 <div align="center">
-  <p>Dibuat dengan AI Studio dari Google dari Github Copilot Agent Mode make Grok Code Fast untuk model nya</p>
+  <p>Dibuat dengan ❤️ menggunakan React, TypeScript, dan TailwindCSS</p>
   <p>
     <a href="#features">Fitur</a> •
     <a href="#quick-start">Quick Start</a> •

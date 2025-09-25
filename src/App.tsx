@@ -8,6 +8,7 @@ import { Modal } from './components/Modal';
 import { DataManagement } from './components/DataManagement';
 import { AddTermForm } from './components/AddTermForm';
 import BulkDataEditor from './components/BulkDataEditor';
+import { Toaster, toast } from 'react-hot-toast';
 import {
     SearchIcon, SunIcon, MoonIcon,
     ChevronDoubleLeftIcon, Bars3Icon,
@@ -26,20 +27,42 @@ const ThemeToggle: React.FC<{ theme: string; toggleTheme: () => void }> = ({ the
     </button>
 );
 
-const SearchInput: React.FC<{ value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ value, onChange }) => (
-    <div className="relative w-full">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <SearchIcon className="h-5 w-5 text-[var(--text-secondary)]" />
+const SearchInput: React.FC<{ value: string; onSearch: (searchTerm: string) => void }> = ({ value, onSearch }) => {
+    const [inputValue, setInputValue] = useState(value);
+
+    const handleSearch = () => {
+        onSearch(inputValue);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
+    return (
+        <div className="relative w-full">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SearchIcon className="h-5 w-5 text-[var(--text-secondary)]" />
+            </div>
+            <input
+                type="text"
+                placeholder="Cari istilah..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full pl-10 pr-12 py-2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+            />
+            <button
+                onClick={handleSearch}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+                title="Cari"
+            >
+                <SearchIcon className="h-5 w-5" />
+            </button>
         </div>
-        <input
-            type="text"
-            placeholder="Cari istilah..."
-            value={value}
-            onChange={onChange}
-            className="w-full pl-10 pr-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg text-[var(--text-primary)] focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
-        />
-    </div>
-);
+    );
+};
 
 interface SidebarProps {
     categories: Category[];
@@ -58,13 +81,11 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, selectedCategoryId, onSel
             transition-all duration-300 ease-in-out
             ${isOpen ? 'w-full md:w-64 lg:w-72 p-4 md:p-6' : 'w-0 p-0'}
             overflow-hidden
+            ${isOpen ? 'md:relative absolute inset-0 z-40 md:z-auto transform translate-x-0 opacity-100' : 'md:relative transform -translate-x-full opacity-0'}
         `}>
             <div className="flex flex-col h-full min-w-[230px] md:min-w-0">
                 <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2">
-                        <img src="./PP-Tio.jpg" alt="Logo" className="w-8 h-8 rounded-full object-cover" />
-                        <h1 className="text-xl font-bold text-[var(--text-primary)]">Glosarium</h1>
-                    </div>
+                    <h2 className="text-lg font-semibold text-[var(--text-primary)]">Kategori</h2>
                     <button
                         onClick={onClose}
                         className="p-2 -mr-2 rounded-full hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
@@ -73,7 +94,7 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, selectedCategoryId, onSel
                         <ChevronDoubleLeftIcon className="w-5 h-5" />
                     </button>
                 </div>
-                <nav className="flex-1 flex flex-row md:flex-col gap-2 md:gap-1 overflow-y-auto pb-2 md:pb-0">
+                <nav className="flex-1 flex flex-col gap-2 md:gap-1 overflow-y-auto pb-2 md:pb-0">
                     {categories.map(cat => (
                         <button
                             key={cat.id}
@@ -93,12 +114,12 @@ const Sidebar: React.FC<SidebarProps> = ({ categories, selectedCategoryId, onSel
     );
 };
 
-const TermList: React.FC<{ terms: Term[]; allTerms: Term[]; onEditTerm?: (term: Term) => void; onDeleteTerm?: (termId: string) => void }> = ({ terms, allTerms, onEditTerm, onDeleteTerm }) => (
+const TermList: React.FC<{ terms: Term[]; allTerms: Term[]; onEditTerm?: (term: Term) => void; onDeleteTerm?: (termId: string) => void; onToggleUnderstood?: (termId: string) => void }> = ({ terms, allTerms, onEditTerm, onDeleteTerm, onToggleUnderstood }) => (
     <main className="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto h-full">
         {terms.length > 0 ? (
             terms.map((term, index) => (
                 <div key={term.id} className="animate-slide-up" style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'backwards' }}>
-                    <TermCard term={term} allTerms={allTerms} onEdit={onEditTerm} onDelete={onDeleteTerm} />
+                    <TermCard term={term} allTerms={allTerms} onEdit={onEditTerm} onDelete={onDeleteTerm} onToggleUnderstood={onToggleUnderstood} />
                 </div>
             ))
         ) : (
@@ -124,13 +145,21 @@ const App: React.FC = () => {
         addTerm,
         updateTerm,
         deleteTerm,
-        bulkAddTerms,
+        toggleTermUnderstood,
         exportData,
         importData,
         resetToDefault,
         clearLocalData
     } = useGlossary();
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+
+    const handleToggleTermUnderstood = useCallback((termId: string) => {
+        if (selectedCategoryId) {
+            toggleTermUnderstood(selectedCategoryId, termId);
+            // Show toast notification
+            toast.success('Status paham berhasil diupdate!');
+        }
+    }, [selectedCategoryId, toggleTermUnderstood]);
     const [searchTerm, setSearchTerm] = useState('');
     const [theme, setTheme] = useState(() => {
         // Load theme from localStorage or default to 'dark'
@@ -143,6 +172,7 @@ const App: React.FC = () => {
     const [sortMode, setSortMode] = useState<'dependency' | 'alphabetical'>('dependency');
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
     const [viewMode, setViewMode] = useState<'list' | 'graph'>('list');
+    const [understoodFilter, setUnderstoodFilter] = useState<'all' | 'understood' | 'not-understood'>('not-understood');
     const [selectedTermForModal, setSelectedTermForModal] = useState<Term | null>(null);
     const [editingTerm, setEditingTerm] = useState<Term | null>(null);
     const [isAddTermMode, setIsAddTermMode] = useState(false);
@@ -266,7 +296,14 @@ const App: React.FC = () => {
             sortedTerms.reverse();
         }
 
-        // 3. Apply search filter
+        // 3. Apply understood filter
+        if (understoodFilter === 'understood') {
+            sortedTerms = sortedTerms.filter(term => term.isUnderstood);
+        } else if (understoodFilter === 'not-understood') {
+            sortedTerms = sortedTerms.filter(term => !term.isUnderstood);
+        }
+
+        // 4. Apply search filter
         if (!searchTerm) {
             return sortedTerms;
         }
@@ -275,7 +312,7 @@ const App: React.FC = () => {
             term.title.toLowerCase().includes(lowercasedFilter) ||
             Object.values(term.definitions).some(def => typeof def === 'string' && def.toLowerCase().includes(lowercasedFilter))
         );
-    }, [currentTerms, sortMode, sortDirection, searchTerm]);
+    }, [currentTerms, sortMode, sortDirection, understoodFilter, searchTerm]);
 
     if (loading) {
         return <div className="flex justify-center items-center h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">Loading Glossary...</div>;
@@ -289,7 +326,8 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col md:flex-row transition-colors">
+        <>
+        <div className="bg-[var(--bg-primary)] text-[var(--text-primary)] min-h-screen flex flex-col md:flex-row transition-colors relative">
             <Sidebar
                 categories={categories}
                 selectedCategoryId={selectedCategoryId}
@@ -298,6 +336,13 @@ const App: React.FC = () => {
                 onClose={() => setIsSidebarOpen(false)}
                 _onImportData={importData}
             />
+            {/* Mobile overlay */}
+            {isSidebarOpen && (
+                <div 
+                    className="md:hidden fixed inset-0 bg-black/50 z-30"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
             <div className="flex-1 flex flex-col bg-[var(--bg-primary)] md:border-l border-[var(--border-primary)]/30 overflow-hidden">
                 <header className="p-4 md:p-6 border-b border-[var(--border-primary)]/30 flex items-center gap-2 md:gap-4 flex-wrap">
                     {!isSidebarOpen && (
@@ -309,10 +354,15 @@ const App: React.FC = () => {
                             <Bars3Icon className="w-5 h-5" />
                         </button>
                     )}
+                    <div className="flex items-center gap-2">
+                        <img src="./PP-Tio.jpg" alt="Logo" className="w-8 h-8 rounded-full object-cover" />
+                        <h1 className="text-xl font-bold text-[var(--text-primary)]">Glosarium</h1>
+                    </div>
                     <div className="flex-1 min-w-[200px]">
-                        <SearchInput value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <SearchInput value={searchTerm} onSearch={setSearchTerm} />
                     </div>
                     <div className="flex items-center gap-2">
+                        <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                         <button
                             onClick={() => setViewMode(prev => prev === 'list' ? 'graph' : 'list')}
                             className="p-2 rounded-full bg-[var(--bg-tertiary)] hover:bg-[var(--border-primary)] text-[var(--text-primary)] transition-all duration-300 hover:shadow-[0_0_15px_rgba(14,165,233,0.4)]"
@@ -339,14 +389,37 @@ const App: React.FC = () => {
                                 {sortDirection === 'asc' ? <BarsArrowUpIcon className="w-5 h-5" /> : <BarsArrowDownIcon className="w-5 h-5" />}
                             </button>
                         </div>
-                    </div>
-                    <div className="flex items-center gap-2 md:gap-4 ml-auto">
-                        <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+                        <div className="flex items-center gap-0.5 bg-[var(--bg-secondary)] rounded-full p-1 border border-[var(--border-primary)]/80">
+                            <button
+                                onClick={() => setUnderstoodFilter('all')}
+                                className={`px-3 py-1 rounded-full transition-all text-xs font-semibold whitespace-nowrap ${understoodFilter === 'all' ? 'bg-green-600 text-white shadow-sm' : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'}`}
+                                aria-label="Tampilkan semua istilah"
+                                title="Tampilkan semua istilah"
+                            >
+                                Semua
+                            </button>
+                            <button
+                                onClick={() => setUnderstoodFilter('understood')}
+                                className={`px-3 py-1 rounded-full transition-all text-xs font-semibold whitespace-nowrap ${understoodFilter === 'understood' ? 'bg-green-600 text-white shadow-sm' : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'}`}
+                                aria-label="Tampilkan istilah yang sudah paham"
+                                title="Tampilkan istilah yang sudah paham"
+                            >
+                                Sudah Paham
+                            </button>
+                            <button
+                                onClick={() => setUnderstoodFilter('not-understood')}
+                                className={`px-3 py-1 rounded-full transition-all text-xs font-semibold whitespace-nowrap ${understoodFilter === 'not-understood' ? 'bg-green-600 text-white shadow-sm' : 'text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]'}`}
+                                aria-label="Tampilkan istilah yang belum paham"
+                                title="Tampilkan istilah yang belum paham"
+                            >
+                                Belum Paham
+                            </button>
+                        </div>
                     </div>
                 </header>
                 <div className="flex-1 relative overflow-hidden">
                     <div className={viewMode === 'list' ? 'block h-full' : 'hidden'} key={selectedCategoryId + '-' + searchTerm}>
-                        <TermList terms={displayTerms} allTerms={currentTerms} onEditTerm={handleEditTerm} onDeleteTerm={handleDeleteTerm} />
+                        <TermList terms={displayTerms} allTerms={currentTerms} onEditTerm={handleEditTerm} onDeleteTerm={handleDeleteTerm} onToggleUnderstood={handleToggleTermUnderstood} />
                     </div>
                     <div className={viewMode === 'graph' ? 'block h-full' : 'hidden'}>
                         <DependencyGraph
@@ -403,7 +476,7 @@ const App: React.FC = () => {
             {isQuizMode && (
                 <Modal onClose={() => setIsQuizMode(false)}>
                     <div className="p-6 pt-12">
-                        <QuizFlow categories={categories} sortedTermsByCategory={sortedTermsByCategory} onExit={() => setIsQuizMode(false)} selectedCategoryId={selectedCategoryId} />
+                        <QuizFlow categories={categories} sortedTermsByCategory={sortedTermsByCategory} onExit={() => setIsQuizMode(false)} selectedCategoryId={selectedCategoryId} understoodFilter={understoodFilter} />
                     </div>
                 </Modal>
             )}
@@ -484,6 +557,8 @@ const App: React.FC = () => {
                 onResetToDefault={resetToDefault}
             />
         </div>
+        <Toaster position="bottom-right" />
+        </>
     );
 };
 

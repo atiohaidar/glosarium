@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Term } from '../types';
 
 interface TermCardProps {
@@ -6,6 +6,7 @@ interface TermCardProps {
   allTerms: Term[];
   onEdit?: (term: Term) => void;
   onDelete?: (termId: string) => void;
+  onToggleUnderstood?: (termId: string) => void;
 }
 
 // This component parses text and wraps found glossary terms in links.
@@ -46,7 +47,45 @@ const linkifyHtmlString = (html: string, allTerms: Term[], currentTermId: string
 }
 
 
-export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDelete }) => {
+export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDelete, onToggleUnderstood }) => {
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isDisappearing, setIsDisappearing] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const startX = useRef(0);
+  const currentX = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    startX.current = e.touches[0].clientX;
+    currentX.current = e.touches[0].clientX;
+    setIsSwiping(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isSwiping) return;
+    currentX.current = e.touches[0].clientX;
+    const deltaX = currentX.current - startX.current;
+    setSwipeOffset(deltaX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwiping) return;
+    const deltaX = currentX.current - startX.current;
+    const threshold = 100; // Minimum swipe distance
+
+    if (Math.abs(deltaX) > threshold) {
+      // Swipe right or left to toggle understood
+      if (onToggleUnderstood) {
+        onToggleUnderstood(term.id);
+        setIsDisappearing(true);
+        setTimeout(() => setIsDisappearing(false), 300); // Reset after animation
+      }
+    }
+
+    setIsSwiping(false);
+    setSwipeOffset(0);
+  };
+
   const definitionEntries = Object.entries(term.definitions);
   const labelMap: { [key: string]: string } = {
     bahasa: 'Bahasa',
@@ -67,7 +106,19 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDe
   };
 
   return (
-    <div id={`term-${term.id}`} className="bg-[var(--bg-tertiary)] p-6 rounded-xl border border-[var(--border-primary)]/30 transition-all duration-300 hover:border-[var(--accent)] hover:shadow-xl hover:shadow-[var(--accent)]/20 hover:bg-[var(--bg-secondary)] hover:scale-[1.02] relative">
+    <div 
+      ref={cardRef}
+      id={`term-${term.id}`} 
+      className={`bg-[var(--bg-tertiary)] p-6 rounded-xl border transition-all duration-300 hover:border-[var(--accent)] hover:shadow-xl hover:shadow-[var(--accent)]/20 hover:bg-[var(--bg-secondary)] hover:scale-[1.02] relative ${isDisappearing ? 'opacity-0 scale-95' : 'opacity-100'} touch-pan-y ${
+        term.isUnderstood 
+          ? 'border-green-400/50 bg-green-50/10 dark:bg-green-950/20' 
+          : 'border-[var(--border-primary)]/30'
+      }`}
+      style={{ transform: `translateX(${swipeOffset}px)` }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Edit and Delete buttons */}
       {(onEdit || onDelete) && (
         <div className="absolute top-4 right-4 flex gap-2">
@@ -97,6 +148,22 @@ export const TermCard: React.FC<TermCardProps> = ({ term, allTerms, onEdit, onDe
       )}
 
       <h3 className="text-xl font-bold text-[var(--text-primary)] mb-4 font-['Poppins'] pr-20">{term.title}</h3>
+      
+      {/* Sudah paham checkbox */}
+      {onToggleUnderstood && (
+        <div className="mb-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={term.isUnderstood || false}
+              onChange={() => onToggleUnderstood(term.id)}
+              className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <span className="text-sm font-medium text-[var(--text-primary)]">Sudah paham</span>
+          </label>
+        </div>
+      )}
+
       <div className="space-y-4">
         {definitionEntries.map(([key, value]) => {
           if (!value || value === '-' || typeof value !== 'string') return null;
